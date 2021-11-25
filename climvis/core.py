@@ -7,7 +7,7 @@ import numpy as np
 from motionless import DecoratedMap, LatLonMarker
 from climvis import cfg, graphics
 
-GOOGLE_API_KEY = 'AIzaSyAjPH6t6Y2OnPDNHesGFvTaVzaaFWj_WCE'
+GOOGLE_API_KEY = "AIzaSyAjPH6t6Y2OnPDNHesGFvTaVzaaFWj_WCE"
 
 
 def haversine(lon1, lat1, lon2, lat2):
@@ -42,7 +42,7 @@ def haversine(lon1, lat1, lon2, lat2):
     # haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
     c = 2 * np.arcsin(np.sqrt(a))
     return c * 6371000  # Radius of earth in meters
 
@@ -64,26 +64,32 @@ def get_cru_timeseries(lon, lat):
     """
 
     with xr.open_dataset(cfg.cru_tmp_file) as ds:
-        tmp_ts = ds.tmp.sel(lon=lon, lat=lat, method='nearest')
+        tmp_ts = ds.tmp.sel(lon=lon, lat=lat, method="nearest")
         df = tmp_ts.to_dataframe()
     with xr.open_dataset(cfg.cru_pre_file) as ds:
-        pre_ts = ds.pre.sel(lon=lon, lat=lat, method='nearest')
-        df['pre'] = pre_ts.to_series()
+        pre_ts = ds.pre.sel(lon=lon, lat=lat, method="nearest")
+        df["pre"] = pre_ts.to_series()
     with xr.open_dataset(cfg.cru_topo_file) as ds:
-        z = float(ds.z.sel(lon=lon, lat=lat, method='nearest'))
+        z = float(ds.z.sel(lon=lon, lat=lat, method="nearest"))
 
     df.grid_point_elevation = z
-    df.distance_to_grid_point = haversine(lon, lat,
-                                          float(pre_ts.lon),
-                                          float(pre_ts.lat))
+    df.distance_to_grid_point = haversine(
+        lon, lat, float(pre_ts.lon), float(pre_ts.lat)
+    )
     return df
 
 
 def get_googlemap_url(lon, lat, zoom=10):
 
-    dmap = DecoratedMap(lat=lat, lon=lon, zoom=zoom,
-                        size_x=640, size_y=640,
-                        maptype='terrain', key=GOOGLE_API_KEY)
+    dmap = DecoratedMap(
+        lat=lat,
+        lon=lon,
+        zoom=zoom,
+        size_x=640,
+        size_y=640,
+        maptype="terrain",
+        key=GOOGLE_API_KEY,
+    )
     dmap.add_marker(LatLonMarker(lat, lon))
     return dmap.generate_url()
 
@@ -119,29 +125,29 @@ def write_html(lon, lat, directory=None, zoom=None):
         zoom = cfg.default_zoom
 
     # Info string
-    lonlat_str = '({:.3f}E, {:.3f}N)'.format(abs(lon), abs(lat))
+    lonlat_str = "({:.3f}E, {:.3f}N)".format(abs(lon), abs(lat))
     if lon < 0:
-        lonlat_str = lonlat_str.replace('E', 'W')
+        lonlat_str = lonlat_str.replace("E", "W")
     if lat < 0:
-        lonlat_str = lonlat_str.replace('N', 'S')
+        lonlat_str = lonlat_str.replace("N", "S")
 
     mkdir(directory)
 
     # Make the plot
-    png = os.path.join(directory, 'annual_cycle.png')
+    png = os.path.join(directory, "annual_cycle.png")
     df = get_cru_timeseries(lon, lat)
     graphics.plot_annual_cycle(df, filepath=png)
 
-    outpath = os.path.join(directory, 'index.html')
-    with open(cfg.html_tpl, 'r') as infile:
+    outpath = os.path.join(directory, "index.html")
+    with open(cfg.html_tpl, "r") as infile:
         lines = infile.readlines()
         out = []
         url = get_googlemap_url(lon, lat, zoom=zoom)
         for txt in lines:
-            txt = txt.replace('[LONLAT]', lonlat_str)
-            txt = txt.replace('[IMGURL]', url)
+            txt = txt.replace("[LONLAT]", lonlat_str)
+            txt = txt.replace("[IMGURL]", url)
             out.append(txt)
-        with open(outpath, 'w') as outfile:
+        with open(outpath, "w") as outfile:
             outfile.writelines(out)
 
     return outpath

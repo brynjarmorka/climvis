@@ -26,25 +26,26 @@ def cruvis_io(args):
 
     if len(args) == 0:
         print(HELP)
-    elif args[0] in ['-h', '--help']:
+    elif args[0] in ["-h", "--help"]:
         print(HELP)
-    elif args[0] in ['-v', '--version']:
-        print('cruvis: ' + climvis.__version__)
-        print('License: public domain')
+    elif args[0] in ["-v", "--version"]:
+        print("cruvis: " + climvis.__version__)
+        print("License: public domain")
         print('cruvis is provided "as is", without warranty of any kind')
-    elif args[0] in ['-l', '--loc']:
+    elif args[0] in ["-l", "--loc"]:
         if len(args) < 3:
-            print('cruvis --loc needs lon and lat parameters!')
+            print("cruvis --loc needs lon and lat parameters!")
             return
         lon, lat = float(args[1]), float(args[2])
         html_path = climvis.write_html(lon, lat)
-        if '--no-browser' in args:
-            print('File successfully generated at: ' + html_path)
+        if "--no-browser" in args:
+            print("File successfully generated at: " + html_path)
         else:
-            webbrowser.get().open_new_tab('file://' + html_path)
+            webbrowser.get().open_new_tab("file://" + html_path)
     else:
-        print('cruvis: command not understood. '
-              'Type "cruvis --help" for usage options.')
+        print(
+            "cruvis: command not understood. " 'Type "cruvis --help" for usage options.'
+        )
 
 
 def cruvis():

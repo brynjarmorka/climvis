@@ -10,34 +10,34 @@ def test_help(capsys):
     # Check that with empty arguments we return the help
     cruvis_io([])
     captured = capsys.readouterr()
-    assert 'Usage:' in captured.out
+    assert "Usage:" in captured.out
     print(captured.out)
 
-    cruvis_io(['-h'])
+    cruvis_io(["-h"])
     captured = capsys.readouterr()
-    assert 'Usage:' in captured.out
+    assert "Usage:" in captured.out
 
-    cruvis_io(['--help'])
+    cruvis_io(["--help"])
     captured = capsys.readouterr()
-    assert 'Usage:' in captured.out
+    assert "Usage:" in captured.out
 
 
 def test_version(capsys):
 
-    cruvis_io(['-v'])
+    cruvis_io(["-v"])
     captured = capsys.readouterr()
     assert climvis.__version__ in captured.out
 
 
 def test_print_html(capsys):
 
-    cruvis_io(['-l', '12.1', '47.3', '--no-browser'])
+    cruvis_io(["-l", "12.1", "47.3", "--no-browser"])
     captured = capsys.readouterr()
-    assert 'File successfully generated at:' in captured.out
+    assert "File successfully generated at:" in captured.out
 
 
 def test_error(capsys):
 
-    cruvis_io(['-l', '12.1'])
+    cruvis_io(["-l", "12.1"])
     captured = capsys.readouterr()
-    assert 'cruvis --loc needs lon and lat parameters!' in captured.out
+    assert "cruvis --loc needs lon and lat parameters!" in captured.out

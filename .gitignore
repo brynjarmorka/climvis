@@ -27,6 +27,3 @@ __pycache__/
 climvis/data/cru_cl1_topography.nc
 climvis/data/cru_ts4.03.1901.2018.pre.dat.nc
 climvis/data/cru_ts4.03.1901.2018.tmp.dat.nc
-
-# personal path to data files
-climvis/your_data_path.py
