@@ -22,3 +22,9 @@ __pycache__/
 # pytest
 .cache
 .pytest_cache
+
+
+# CRU data files
+climvis/data/cru_cl1_topography.nc
+climvis/data/cru_ts4.03.1901.2018.pre.dat.nc
+climvis/data/cru_ts4.03.1901.2018.tmp.dat.nc
