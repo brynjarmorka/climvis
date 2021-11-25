@@ -24,6 +24,13 @@ If you are on a university computer, you should use:
 
     $ pip install --user -e .
 
+## Data needed for our version of climvis
+
+Download the datafiles and put them in the following directory:
+- climvis/data/cru_cl1_topography.nc
+- climvis/data/cru_ts4.03.1901.2018.pre.dat.nc
+- climvis/data/cru_ts4.03.1901.2018.tmp.dat.nc
+
 ## Command line interface
 
 ``setup.py`` defines an "entry point" for a script to be used as a
