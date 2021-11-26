@@ -22,6 +22,7 @@ def get_cru_dir():
     full_path = os.path.expanduser(path)
     f = open(full_path, 'r')
     local_path = f.read()
+    f.close()
     return local_path
 
 
