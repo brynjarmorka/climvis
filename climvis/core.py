@@ -6,6 +6,8 @@ import xarray as xr
 import numpy as np
 from motionless import DecoratedMap, LatLonMarker
 from climvis import cfg, graphics
+import csv
+import pandas as pd
 
 GOOGLE_API_KEY = "AIzaSyAjPH6t6Y2OnPDNHesGFvTaVzaaFWj_WCE"
 
@@ -151,3 +153,56 @@ def write_html(lon, lat, directory=None, zoom=None):
             outfile.writelines(out)
 
     return outpath
+
+
+
+
+def open_cities_file():
+    """
+    Opens file with cities and corresponding coordinates
+    
+    author: Paula
+    
+    Returns
+    -------
+    cities: pd Data Frame of country, city, longitude, latitude, elevation
+
+    """
+    world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
+    cityfile = open(world_cities)
+    reader = csv.reader(cityfile)
+    # read header (first row)
+    header = next(reader)
+    cities_list = []
+    
+    #read rows in a list
+    for row in reader:
+        cities_list.append(row)
+        
+    cityfile.close()
+    
+    # Convert list to Data Frame
+    cities = pd.DataFrame(cities_list, columns = header)
+    
+    return(cities)
+
+def coordinates_city(city):
+    """
+    Extracts coordinates for the asked country
+    
+    author: Paula
+    
+    Paramters
+    -------
+    city: City, which is asked for (Argument)
+    country: Country, in which asked city is located (Argument)
+    
+    Returns
+    -------
+    coord_city = pd DataFrame of asked city (incl Country, Name, lon, lat, elevation)
+    
+    """
+    cities = open_cities_file()
+    coord_city = cities[(cities['Name'] == city)]
+    return coord_city
+
