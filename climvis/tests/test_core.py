@@ -71,3 +71,8 @@ def test_write_html(tmpdir):
     dir = str(tmpdir.join("html_dir"))
     core.write_html(dfi.Lon, dfi.Lat, directory=dir)
     assert os.path.isdir(dir)
+    
+def test_open_cities_file():
+    cities = core.open_cities_file()
+    assert type(cities) == pd.core.frame.DataFrame
+    assert cities.columns[1] == 'Name'

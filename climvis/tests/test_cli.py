@@ -2,6 +2,7 @@
 # At least we separated our actual program from the I/O part so that we
 # can test that
 import climvis
+import pytest
 from climvis.cli import cruvis_io
 
 
@@ -31,13 +32,37 @@ def test_version(capsys):
 
 def test_print_html(capsys):
 
-    cruvis_io(["-l", "12.1", "47.3", "--no-browser"])
+    cruvis_io(["-l", "Berlin", "Germany", "--no-browser"])
     captured = capsys.readouterr()
     assert "File successfully generated at:" in captured.out
+    
+#def test_print_html2(capsys):
+
+    #cruvis_io(["-l", "Innsbruck", "--no-browser"])
+    #captured = capsys.readouterr()
+    #assert "File successfully generated at:" in captured.out
 
 
-def test_error(capsys):
+def test_error_1argument(capsys):
 
-    cruvis_io(["-l", "12.1"])
+    cruvis_io(["-l"])
     captured = capsys.readouterr()
-    assert "cruvis --loc needs lon and lat parameters!" in captured.out
+    assert "cruvis --loc needs city parameter!" in captured.out
+
+
+def test_error_2cities():
+    with pytest.raises(ValueError, match = 'There are more cities with the name Berlin.'
+                                 'Please add the country of the city as input!'):
+        cruvis_io(["-l", "Berlin"])    
+
+def test_error_wrongcountry(capsys):
+    
+    with pytest.raises(ValueError, match = 'The city Innsbruck does not exist in Germany'):
+        cruvis_io(["-l", "Innsbruck", "Germany"])
+        
+def test_error_not_available_city():
+    with pytest.raises(ValueError, match = 'The city Munich -and corresponding country- does not exist in the available list of cities. Please try another city nearby!'):
+        cruvis_io(["-l", "Munich"])
+    
+
+    
