@@ -180,7 +180,8 @@ def open_cities_file():
     cities: pd Data Frame of country, city, longitude, latitude, elevation
 
     """
-    world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
+    #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
+    world_cities = cfg.world_cities
     cityfile = open(world_cities)
     reader = csv.reader(cityfile)
     # read header (first row)

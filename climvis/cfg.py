@@ -18,7 +18,7 @@ def get_cru_dir():
     string
         local path for CRU files
     """
-    path = Path("~/.climvis")
+    path = Path("~/.climvis.txt")
     full_path = os.path.expanduser(path)
     f = open(full_path, 'r')
     local_path = f.read()
