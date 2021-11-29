@@ -8,6 +8,7 @@ from motionless import DecoratedMap, LatLonMarker
 from climvis import cfg, graphics
 import csv
 import pandas as pd
+import sys
 
 GOOGLE_API_KEY = "AIzaSyAjPH6t6Y2OnPDNHesGFvTaVzaaFWj_WCE"
 
@@ -138,6 +139,17 @@ def write_html(lon, lat, directory=None, zoom=None):
     # Make the plot
     png = os.path.join(directory, "annual_cycle.png")
     df = get_cru_timeseries(lon, lat)
+    
+    #checking for NaN's
+    """ 
+    Author: Leo
+    short piece of code, which checks for NaN and throws a Error + Message 
+    to the User that his chosen location migth be somewhere in the oceans
+    """
+    if df.isnull().values.any():
+        sys.exit('''Only land data is covered in this dataset!!!
+                 Your coordinates might be located somewhere in the oceans!''')
+    
     graphics.plot_annual_cycle(df, filepath=png)
 
     outpath = os.path.join(directory, "index.html")
