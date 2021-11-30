@@ -5,7 +5,7 @@ import shutil
 import xarray as xr
 import numpy as np
 from motionless import DecoratedMap, LatLonMarker
-from climvis import cfg, graphics
+from climvis import cfg, graphics, cli
 import csv
 import pandas as pd
 import sys
@@ -157,13 +157,15 @@ def write_html(lon, lat, directory=None, zoom=None):
         lines = infile.readlines()
         out = []
         url = get_googlemap_url(lon, lat, zoom=zoom)
+        city = cli.sys.argv[2]
         for txt in lines:
             txt = txt.replace("[LONLAT]", lonlat_str)
             txt = txt.replace("[IMGURL]", url)
+            txt = txt.replace("[CITY]", city)            
             out.append(txt)
         with open(outpath, "w") as outfile:
             outfile.writelines(out)
-
+        
     return outpath
 
 
