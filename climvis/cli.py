@@ -40,15 +40,17 @@ def cruvis_io(args):
             print("cruvis --loc needs city parameter!")
             return
         
+        # extract city and country argment if --no-browser is in argument
         args2 = args
         if "--no-browser" in args:
             args2 = args[:-1]
-            
-        city = args[1]
-        coord = climvis.core.coordinates_city(city) 
         
+        # get coordinates of asked city
+        city = args[1]
+        coord = climvis.core.coordinates_city(city)
+        
+        # Check if there are more cities with the same name
         if len(coord) > 1:
-            # Check if there are more cities with the same name
             if len(args2) == 3:
                 country = args[2]
                 coord = coord[(coord['Country'] == country)]
@@ -56,9 +58,11 @@ def cruvis_io(args):
                 raise ValueError(f'There are more cities with the name {city}.'
                                  'Please add the country of the city as input!')
         
+        # Check if city is available in list
         if coord.empty:
             raise ValueError(f'The city {city} -and corresponding country- does not exist in the available list of cities. Please try another city nearby!')
         
+        # Check if given city is in given country
         if len(args2) == 3:
             country = args[2]
             if (coord['Country'] != country).item():
