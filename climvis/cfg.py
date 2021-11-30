@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 no_cru = 'The CRU files are not available on this system. For cruvis (part of the climvis package) to work properly,\n'\
-         'please create a file called ".climvis" in your HOME directory*, and indicate the path to the CRU directory '\
-         f'in it.\n*Your HOME directory is "{os.path.expanduser("~")}"'
+         'please create a file called ".climvis.txt" in your HOME directory*, and indicate the path to the CRU '\
+         f'directory in it.\n*Your HOME directory is "{os.path.expanduser("~")}"'
 
 
 def get_cru_dir():
