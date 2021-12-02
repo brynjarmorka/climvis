@@ -2,9 +2,11 @@
 import os
 from pathlib import Path
 
-no_cru = 'The CRU files are not available on this system. For cruvis (part of the climvis package) to work properly,\n'\
+no_cru = 'The CRU and ERA5 files are not available on this system. For cruvis (part of the climvis package) to work properly,\n'\
          'please create a file called ".climvis.txt" in your HOME directory*, and indicate the path to the CRU '\
-         f'directory in it.\n*Your HOME directory is "{os.path.expanduser("~")}"'
+         f'directory in it.\n*Your HOME directory is "{os.path.expanduser("~")}." '\
+         'The ERA5 data is here available: https://fabienmaussion.info/climate_system/download.html'\
+         'and download the file: ERA5_LowRes_Monthly_snow.nc'
 
 
 def get_cru_dir():
@@ -32,12 +34,12 @@ try:
     cru_tmp_file = cru_dir / "cru_ts4.03.1901.2018.tmp.dat.nc"
     cru_pre_file = cru_dir / "cru_ts4.03.1901.2018.pre.dat.nc"
     cru_topo_file = cru_dir / "cru_cl1_topography.nc"
-    #era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc"
+    era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc" # downloaded from: https://fabienmaussion.info/climate_system/download.html
 except Exception as exc:
     raise FileNotFoundError(no_cru)
 
 # then check if the files actually exists
-if cru_topo_file.exists() and cru_pre_file.exists() and cru_topo_file.exists():
+if cru_topo_file.exists() and cru_pre_file.exists() and cru_topo_file.exists() and era5_snow_file.exists():
     print("CRU files successfully found.")
 else:
     raise FileNotFoundError(no_cru)
