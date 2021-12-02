@@ -105,3 +105,12 @@ def cruvis():
     # Minimal code because we don't want to test for sys.argv
     # (we could, but this is too complicated for now)
     cruvis_io(sys.argv[1:])
+
+
+def uibkvis():
+    """
+    Entry point for the uibkvis application script.
+
+    Author: Brynjar
+    """
+    print("Hello, world.")
