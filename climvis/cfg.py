@@ -44,6 +44,6 @@ else:
 
 bdir = os.path.dirname(__file__)
 html_tpl = os.path.join(bdir, "data", "template.html")
-world_cities = os.path.join(bdir, "data", "world_cities.csv")
+world_cities = os.path.join(bdir, "data", "world_cities_41k.csv")
 
 default_zoom = 8
