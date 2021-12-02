@@ -26,10 +26,12 @@ If you are on a university computer, you should use:
 
 ## Data needed for our version of climvis
 
-Download the datafiles and put them in the following directory:
-- climvis/data/cru_cl1_topography.nc
-- climvis/data/cru_ts4.03.1901.2018.pre.dat.nc
-- climvis/data/cru_ts4.03.1901.2018.tmp.dat.nc
+Download the datafiles and put them somewhere on your PC. 
+Then you make the file ".climvis.txt" and put it in your HOME directory, 
+and the file shall only contain the path to these files:
+- "your_path"/cru_cl1_topography.nc
+- "your_path"/cru_ts4.03.1901.2018.pre.dat.nc
+- "your_path"/cru_ts4.03.1901.2018.tmp.dat.nc
 
 ## Command line interface
 
