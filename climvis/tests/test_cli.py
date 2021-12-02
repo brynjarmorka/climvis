@@ -49,11 +49,12 @@ def test_error_1argument(capsys):
     captured = capsys.readouterr()
     assert "cruvis --loc needs city parameter!" in captured.out
 
-
-def test_error_2cities():
-    with pytest.raises(ValueError, match = 'There are more cities with the name Berlin.'
-                                 'Please add the country of the city as input!'):
-        cruvis_io(["-l", "Berlin"])    
+# This test is not working correctly because the user now selects city manually with an input when len(coords) > 1.
+# Since it is user input, the testing of the input is done with try/except within an while-loop, in the cli.py file.
+# def test_error_2cities():
+#     with pytest.raises(ValueError, match = 'There are more cities with the name Berlin.'
+#                                  'Please add the country of the city as input!'):
+#         cruvis_io(["-l", "Berlin"])
 
 def test_error_wrongcountry(capsys):
     
@@ -61,8 +62,9 @@ def test_error_wrongcountry(capsys):
         cruvis_io(["-l", "Innsbruck", "Germany"])
         
 def test_error_not_available_city():
-    with pytest.raises(ValueError, match = 'The city Munich -and corresponding country- does not exist in the available list of cities. Please try another city nearby!'):
-        cruvis_io(["-l", "Munich"])
+    # The available city in the list is Munich
+    with pytest.raises(ValueError, match = 'The city München -and corresponding country- does not exist in the available list of cities. Please try another city nearby!'):
+        cruvis_io(["-l", "München"])
     
 
     

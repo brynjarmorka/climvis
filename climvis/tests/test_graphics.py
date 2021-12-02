@@ -8,7 +8,7 @@ from climvis import core, cfg, graphics
 
 def test_annual_cycle(tmpdir):
 
-    df_cities = pd.read_csv(cfg.world_cities)
+    df_cities = pd.read_csv(cfg.world_cities, encoding="windows-1252")
     dfi = df_cities.loc[
         df_cities.Name.str.contains("innsbruck", case=False, na=False)
     ].iloc[0]
