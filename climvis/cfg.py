@@ -34,7 +34,7 @@ try:
     cru_tmp_file = cru_dir / "cru_ts4.03.1901.2018.tmp.dat.nc"
     cru_pre_file = cru_dir / "cru_ts4.03.1901.2018.pre.dat.nc"
     cru_topo_file = cru_dir / "cru_cl1_topography.nc"
-    era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc"
+    era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc" # downloaded from: https://fabienmaussion.info/climate_system/download.html
 except Exception as exc:
     raise FileNotFoundError(no_cru)
 
