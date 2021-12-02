@@ -5,7 +5,7 @@ import shutil
 import xarray as xr
 import numpy as np
 from motionless import DecoratedMap, LatLonMarker
-from climvis import cfg, graphics, cli
+from climvis import cfg, graphics, cli, climate_change
 import csv
 import pandas as pd
 import sys
@@ -131,6 +131,7 @@ def write_html(lon, lat, directory=None, zoom=None):
 
     # Make the plot
     png = os.path.join(directory, "annual_cycle.png")
+    png2 = os.path.join(directory, "annual_tmp_averages.png")
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
@@ -144,6 +145,7 @@ def write_html(lon, lat, directory=None, zoom=None):
                  Your coordinates might be located somewhere in the oceans!''')
     
     graphics.plot_annual_cycle(df, filepath=png)
+    climate_change.plot_timeseries(df, filepath = png2)
 
     outpath = os.path.join(directory, "index.html")
     with open(cfg.html_tpl, "r") as infile:
