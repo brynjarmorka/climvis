@@ -9,7 +9,7 @@ from climvis import core, cfg
 
 def test_get_ts():
 
-    df_cities = pd.read_csv(cfg.world_cities)
+    df_cities = pd.read_csv(cfg.world_cities, encoding="windows-1252")
     dfi = df_cities.loc[
         df_cities.Name.str.contains("innsbruck", case=False, na=False)
     ].iloc[0]
@@ -43,16 +43,17 @@ def test_get_ts():
     assert dfs.corr().values[0, 1] > 0.95
     assert dfs.groupby(dfs.index.year).mean().corr().values[0, 1] > 0.9
 
-    # Check that altitude correction is helping a little
-    z_diff = df.grid_point_elevation - dfi.Elevation
-    dfs["tmp_cor"] = dfs["tmp"] + z_diff * 0.0065
-    dfm = dfs.mean()
-    assert np.abs(dfm.ref - dfm.tmp_cor) < np.abs(dfm.ref - dfm.tmp)
+    # The newer data set does not have the Elevation
+    # # Check that altitude correction is helping a little
+    # z_diff = df.grid_point_elevation - dfi.Elevation
+    # dfs["tmp_cor"] = dfs["tmp"] + z_diff * 0.0065
+    # dfm = dfs.mean()
+    # assert np.abs(dfm.ref - dfm.tmp_cor) < np.abs(dfm.ref - dfm.tmp)
 
 
 def test_get_url():
 
-    df_cities = pd.read_csv(cfg.world_cities)
+    df_cities = pd.read_csv(cfg.world_cities, encoding="windows-1252")
     dfi = df_cities.loc[
         df_cities.Name.str.contains("innsbruck", case=False, na=False)
     ].iloc[0]
@@ -63,7 +64,7 @@ def test_get_url():
 
 def test_write_html(tmpdir):
 
-    df_cities = pd.read_csv(cfg.world_cities)
+    df_cities = pd.read_csv(cfg.world_cities, encoding="windows-1252")
     dfi = df_cities.loc[
         df_cities.Name.str.contains("innsbruck", case=False, na=False)
     ].iloc[0]

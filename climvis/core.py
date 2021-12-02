@@ -5,7 +5,7 @@ import shutil
 import xarray as xr
 import numpy as np
 from motionless import DecoratedMap, LatLonMarker
-from climvis import cfg, graphics, climate_change
+from climvis import cfg, graphics, cli
 import csv
 import pandas as pd
 import sys
@@ -15,7 +15,6 @@ GOOGLE_API_KEY = "AIzaSyAjPH6t6Y2OnPDNHesGFvTaVzaaFWj_WCE"
 
 def haversine(lon1, lat1, lon2, lat2):
     """Great circle distance between two (or more) points on Earth
-
     Parameters
     ----------
     lon1 : float
@@ -26,11 +25,9 @@ def haversine(lon1, lat1, lon2, lat2):
        scalar or array of point(s) longitude
     lat2 : float
        scalar or array of point(s) longitude
-
     Returns
     -------
     the distances
-
     Examples:
     ---------
     >>> haversine(34, 42, 35, 42)
@@ -52,14 +49,12 @@ def haversine(lon1, lat1, lon2, lat2):
 
 def get_cru_timeseries(lon, lat):
     """Read the climate time series out of the netcdf files.
-
     Parameters
     ----------
     lon : float
         the longitude
     lat : float
         the latitude
-
     Returns
     -------
     a pd.DataFrame with additional attributes: ``grid_point_elevation`` and
@@ -99,11 +94,9 @@ def get_googlemap_url(lon, lat, zoom=10):
 
 def mkdir(path, reset=False):
     """Checks if directory exists and if not, create one.
-
     Parameters
     ----------
     reset: erase the content of the directory if exists
-
     Returns
     -------
     the path
@@ -138,7 +131,6 @@ def write_html(lon, lat, directory=None, zoom=None):
 
     # Make the plot
     png = os.path.join(directory, "annual_cycle.png")
-    png2 = os.path.join(directory, "annual_tmp_averages.png")
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
@@ -152,20 +144,21 @@ def write_html(lon, lat, directory=None, zoom=None):
                  Your coordinates might be located somewhere in the oceans!''')
     
     graphics.plot_annual_cycle(df, filepath=png)
-    climate_change.plot_timeseries(df, filepath = png2)
-    
+
     outpath = os.path.join(directory, "index.html")
     with open(cfg.html_tpl, "r") as infile:
         lines = infile.readlines()
         out = []
         url = get_googlemap_url(lon, lat, zoom=zoom)
+        city = cli.sys.argv[2]
         for txt in lines:
             txt = txt.replace("[LONLAT]", lonlat_str)
             txt = txt.replace("[IMGURL]", url)
+            txt = txt.replace("[CITY]", city)            
             out.append(txt)
         with open(outpath, "w") as outfile:
             outfile.writelines(out)
-
+        
     return outpath
 
 
@@ -180,7 +173,6 @@ def open_cities_file():
     Returns
     -------
     cities: pd Data Frame of country, city, longitude, latitude, elevation
-
     """
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
     world_cities = cfg.world_cities
