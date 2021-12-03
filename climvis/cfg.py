@@ -47,7 +47,7 @@ else:
 
 bdir = os.path.dirname(__file__)
 html_tpl = os.path.join(bdir, "data", "template.html")
-html_tpl_uibkvis = os.path.join(bdir, "data", "template_uibkvis.html")
+html_tpl_uibkvis = os.path.join(bdir, "data", "uibkvis_template.html")
 world_cities = os.path.join(bdir, "data", "world_cities_41k.csv")
 
 default_zoom = 8
