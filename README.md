@@ -6,6 +6,15 @@ It was written for the University of Innsbruck's
 [scientific programming](http://fabienmaussion.info/scientific_programming)
 lecture as a package template for the assignments.
 
+## The additions made by our gruop
+
+- The user inputs a city, not lat lon
+- Plot changes in the climate at the selected location
+- Snow coverage
+- Basic HTML styling
+- Added the "uibkvis" command for plotting ACINN data
+
+
 ## HowTo
 
 Make sure you have all dependencies installed. These are:
@@ -14,6 +23,7 @@ Make sure you have all dependencies installed. These are:
 - xarray
 - motionless
 - matplotlib
+- windrose
 
 Download the package and install it development mode. From the root directory,
 do:
@@ -41,6 +51,11 @@ command line program. Currently, the only command installed is ``cruvis``.
 After installation, just type:
 
     $ cruvis --help
+
+or
+
+    $ uibkvis --help
+
 
 To see what it can do for you.
 
