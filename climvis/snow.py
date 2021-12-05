@@ -17,6 +17,9 @@ import xarray as xr  # netCDF library
 import cartopy  # Map projections libary
 import cartopy.crs as ccrs  # Projections list
 import cartopy.feature as cfeature
+import matplotlib.ticker as mticker
+from cartopy.mpl.ticker import (LongitudeFormatter, LatitudeFormatter,
+                                LatitudeLocator)
 import datetime
 # Some defaults:
 
@@ -33,7 +36,7 @@ def get_data():
     snow_depth: Data Array, snow depth in m (dim: longitude, latitude, time(monthly)) 
     """
     
-    df_snow = xr.open_dataset('D:/Uni/Master/2021_WS_Programming/Project/ERA5_LowRes_Monthly_snow.nc')
+    df_snow = xr.open_dataset(cfg.era5_snow_file)
     density_water = 1000 #kg/m^3
     
     snow_depth = density_water * df_snow.sd / df_snow.rsn
@@ -94,6 +97,11 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
    
     
     g, ax = plt.subplots(figsize=(6,4))
+    
+    plt.gca().axes.yaxis.set_visible(False)
+    plt.gca().axes.xaxis.set_visible(False)
+    plt.box(on = False)
+    
     ax = plt.axes(projection=ccrs.PlateCarree())
     #ax.stock_img()
     #from mpl_toolkits.basemap import Basemap
@@ -103,15 +111,17 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
                 #resolution=None,lat_1=45.,lat_2=55,lat_0=50,lon_0=-107.)
     #ax.shadedrelief()
     snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = 10, vmin = 0, alpha = 0.7)
+    plt.plot(lon,lat,'rx', ms = 12, mew = 3) #Plot selected point
     ax.add_feature(cartopy.feature.BORDERS);
     ax.coastlines();
     ax.set_xlim(lon - d_lon, lon + d_lon)
     ax.set_ylim(lat - d_lat, lat + d_lat)
-    ax.gridlines(draw_labels=True)
-
-    plt.plot(lon,lat,'rx', ms = 12, mew = 3) #Plot selected point
+    gl = ax.gridlines(draw_labels=True)
+    gl.top_labels = False
+    gl.right_labels = False
+   # gl.xlocator = mticker.FixedLocator(np.linspace(lon - d_lon, lon + d_lon,1))
+    #gl.xformatter = LongitudeFormatter()
     month_label = ['January','February','March', 'April', 'May', 'June', 'July', 'August', 'September', 'Ocotber', 'November', 'December']
-    
     plt.title(f'Snow depth (in m) averaged ({year_begin} - 2018) in {month_label[month]}');
 
 
@@ -120,4 +130,6 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
         plt.close()
         
     return g
+
+ax = plot_snowdepth(11,47,2,5, filepath = None)
 
