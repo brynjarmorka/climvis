@@ -9,6 +9,7 @@ import pandas as pd
 import sys
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 from climvis.core import mkdir
 
 
@@ -21,12 +22,14 @@ def write_html_uibkvis(station, interval, directory=None):
 
     # Make the plot
     png = os.path.join(directory, "winds_lvl1.png")
+    png2 = os.path.join(directory, 'windrose.png')
 
     # Read inn the ACINN data
     df = load_acinn_data(station, interval)
 
     # make plots
-    uibk_graphics.plot_wind_dir(df, station, filepath=png)
+    uibk_graphics.plot_wind_dir(df, station, interval, filepath=png)
+    uibk_graphics.plot_windrose(df, station, interval, filepath=png2)
 
     # make the html
     outpath = os.path.join(directory, "uibk.html")
@@ -62,11 +65,19 @@ def load_acinn_data(station, interval):
         the data from the station in a dataframe
     """
     url = f'https://acinn-data.uibk.ac.at/{station}/{interval}'
+
     # Parse the given url
-    req = urlopen(Request(url)).read()
+    try:
+        req = urlopen(Request(url)).read()
+    except HTTPError:
+        sys.exit(f'HTTPError. The url did not work. Check your connection. Check the url yourself:\n{url}')
+
     # Read the data
     df = pd.read_json(req.decode('utf-8'))
     df['time'] = [datetime(1970, 1, 1) + timedelta(milliseconds=ds) for ds in df['datumsec']]
+
+    # Check if the df is empty.
     if df.isnull().values.any():
         sys.exit(f"Something is wrong on the ACINN database. Try again, or visit the url yourself:\n{url}")
+
     return df

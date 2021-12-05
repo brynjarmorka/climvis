@@ -60,6 +60,7 @@ def uibkvis_io(args):
         print(version_uibk)
     elif args[0] in ['-l', '--location']:
 
+        # if there are no arguments, or too many arguments
         if len(args) == 1 or len(args) > 3:
             raise ValueError('Please specify station and interval when using "-l".\n Type "uibkvis -h" for help')
 
@@ -69,10 +70,8 @@ def uibkvis_io(args):
             interval = intervals[args[2]]
         except KeyError:
             print('Station must be in [i, e, o, s] and interval in [1, 3, 7]')
-        print(station, interval)
 
         # passing the station and interval to the function making the html
-
         html_path = climvis.write_html_uibkvis(station, interval)
         if "--no-browser" in args:
             print("File successfully generated at: " + html_path)
