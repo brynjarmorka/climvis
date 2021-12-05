@@ -29,5 +29,7 @@ def test_error_bad_user_input(capsys):
     """
     Test of bad user input, which is handeled by a try/except, which should raise a KeyError
     """
-    with pytest.raises(KeyError, match='Invalid input!'):
-        uibkvis_io(['-l', 'i', '2'])
+    with pytest.raises(KeyError, match="Invalid input!"):
+        uibkvis_io(["-l", "i", "2"])
+    with pytest.raises(KeyError, match="Invalid input!"):
+        uibkvis_io(["-l", "å", "1"])

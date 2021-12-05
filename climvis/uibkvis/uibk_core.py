@@ -22,7 +22,7 @@ def write_html_uibkvis(station, interval, directory=None):
 
     # Make the plot
     png = os.path.join(directory, "winds_lvl1.png")
-    png2 = os.path.join(directory, 'windrose.png')
+    png2 = os.path.join(directory, "windrose.png")
 
     # Read inn the ACINN data
     df = load_acinn_data(station, interval)
@@ -64,7 +64,7 @@ def load_acinn_data(station, interval):
     data: pandas dataframe
         the data from the station in a dataframe
     """
-    url = f'https://acinn-data.uibk.ac.at/{station}/{interval}'
+    url = f"https://acinn-data.uibk.ac.at/{station}/{interval}"
 
     # Parse the given url
     try:
@@ -73,8 +73,8 @@ def load_acinn_data(station, interval):
         sys.exit(f'HTTPError. The url did not work. Check your connection. Check the url yourself:\n{url}')
 
     # Read the data
-    df = pd.read_json(req.decode('utf-8'))
-    df['time'] = [datetime(1970, 1, 1) + timedelta(milliseconds=ds) for ds in df['datumsec']]
+    df = pd.read_json(req.decode("utf-8"))
+    df["time"] = [datetime(1970, 1, 1) + timedelta(milliseconds=ds) for ds in df["datumsec"]]
 
     # Check if the df is empty.
     if df.isnull().values.any():

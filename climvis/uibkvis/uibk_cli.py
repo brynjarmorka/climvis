@@ -23,8 +23,10 @@ Usage:
     --no-browser                        : the default behavior is to open a browser with the newly generated 
                                         visualisation. Set to ignore and print the path to the html file instead 
 """
-version_uibk = f'climvis: {climvis.__version__} \n License: public domain \n climvis is provides "as is", without ' \
-               f'warranty of any kind '
+version_uibk = (
+    f'climvis: {climvis.__version__} \n License: public domain \n climvis is provides "as is", without '
+    f"warranty of any kind "
+)
 
 
 def uibkvis():
@@ -51,23 +53,23 @@ def uibkvis_io(args):
 
     # Defining the possible stations and intervals through a dictionary
     # This is done to ensure right input.
-    stations = {'i': 'innsbruck', 'e': 'ellboegen', 'o': 'obergurgl', 's': 'sattelberg'}
-    intervals = {'1': '1', '3': '3', '7': '7'}
+    stations = {"i": "innsbruck", "e": "ellboegen", "o": "obergurgl", "s": "sattelberg"}
+    intervals = {"1": "1", "3": "3", "7": "7"}
     no_browser = False
 
     # Checking for --no-browser, then removing that argument. This is done first to make len(args) easier to use
-    if '--no-browser' in args:
+    if "--no-browser" in args:
         no_browser = True
-        args.remove('--no-browser')
+        args.remove("--no-browser")
 
     # Checking which input the user gave
-    if len(args) == 0 or args[0] in ['-h', '--help']:
+    if len(args) == 0 or args[0] in ["-h", "--help"]:
         print(HELP_uibkvis)
-    elif args[0] in ['-v', '--version']:
+    elif args[0] in ["-v", "--version"]:
         print(version_uibk)
 
     # when the user actually (tries to) use uibkvis
-    elif args[0] in ['-l', '--location']:
+    elif args[0] in ["-l", "--location"]:
 
         # if there are no additional arguments, or too many arguments
         if len(args) == 1 or len(args) > 3:

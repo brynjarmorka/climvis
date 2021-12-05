@@ -31,6 +31,7 @@ def test_error_load_acinn_data():
     with pytest.raises(SystemExit, match="HTTPError"):
         df = load_acinn_data(station, interval)
 
+
 # dont know how to test write_html_uibkvis() in a good way
 # def test_write_html_uibkvis()
 #     ...
