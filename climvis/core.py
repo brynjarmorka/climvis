@@ -215,3 +215,4 @@ def coordinates_city(city):
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
 
+
