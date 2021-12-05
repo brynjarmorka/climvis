@@ -3,6 +3,9 @@
 Created on Thu Dec  2 13:47:04 2021
 
 @author: Paula
+
+Takes ERA5 data of snow depth (and snow densitiy) to visualize th snow depth at the selected city and around.
+The user (tourist) can see, where the most snow is in average.
 """
 
 # function for a plot on snow cover
@@ -16,54 +19,22 @@ import cartopy.crs as ccrs  # Projections list
 import cartopy.feature as cfeature
 import datetime
 # Some defaults:
-plt.rcParams['figure.figsize'] = (12, 5)  # Default plot size
-
-lon = float(47)
-lat = float(11)
-
-def get_snow_data(lon, lat):
-    """Read the snow time series out of the netcdf files.
-    
-    Parameters
-    ----------
-    lon : float
-        the longitude
-    lat : float
-        the latitude
-        
-    Returns
-    -------
-    a pd.DataFrame with additional attributes: ``grid_point_elevation`` and
-    ``distance_to_grid_point``.
-    """
-
-    with xr.open_dataset(cfg.era5_snow_file) as ds:
-        snow_depth = ds.sd.sel(longitude=lon, latitude=lat, method="nearest")
-        df = snow_depth.to_dataframe()
-        snow_fall = ds.sf.sel(longitude=lon, latitude=lat, method="nearest")
-        df["fall"] = snow_fall.to_series()
-        snow_density = ds.sd.sel(longitude=lon, latitude=lat, method="nearest")
-        df["density"] = snow_density.to_series()
-        
-
-    #df.grid_point_elevation = z
-    df.distance_to_grid_point = core.haversine(lon, lat, float(snow_depth.longitude), float(snow_depth.latitude))
-    return df
 
 
-df_snow = get_snow_data(11.25,47.25)
 
-
-#df_snow
-#depth_we = df_snow.sd
-#density_snow = df_snow.rsn
-density_water = 1000 #kg/m^3
-
-snow_depth = density_water * df_snow.sd / df_snow.density
-snow_fall = density_water * df_snow.fall / df_snow.density
 
 def get_data():
+    """Opens file of monthly snow data (ERA5). The user should have download the data before and saved this
+    at the same directory as the CRU files. (link for download: https://fabienmaussion.info/climate_system/download.html)
+    Computes the snow depth in m (from meter in water eqivalent).
+    
+    Returns
+    -------
+    snow_depth: Data Array, snow depth in m (dim: longitude, latitude, time(monthly)) 
+    """
+    
     df_snow = xr.open_dataset('D:/Uni/Master/2021_WS_Programming/Project/ERA5_LowRes_Monthly_snow.nc')
+    density_water = 1000 #kg/m^3
     
     snow_depth = density_water * df_snow.sd / df_snow.rsn
     snow_fall = density_water * df_snow.sf / df_snow.rsn
@@ -71,21 +42,49 @@ def get_data():
     return snow_depth
 
 def extract_map_part(lon,lat,month, years):
+    """Extracts data, which should be plotted: around the selected city,
+    the average of snow depth over a certain period of time until the end of data (2018),
+    for a selected month.
+    
+    Parameters
+    -------
+    lon: float, longitude of the selected city
+    lat: float, latitude of the selected city
+    month: int, selected month (input)
+    years: int, number of years which should be avereged (until 2018)
+    
+    Returns
+    -------
+    snow_depth_map: Data Array, snow depth in m, which should be plotted (dim: longitude, latitude) 
+    """
+    
     snow_depth = get_data()
     d_lon = 2
     d_lat = 2
     lon_range = slice(lon - d_lon, lon + d_lon)
     lat_range = slice(lat + d_lat, lat - d_lat)
     
-    int(years)
     year_begin = 2018-years
+    
     snow_depth_year = snow_depth.sel(time = slice(str(year_begin), '2019'))
     snow_depth_mon = snow_depth_year.groupby('time.month').mean().sel(month = month)
-    snow_depth_map = snow_depth_mon.sel(latitude=lat_range).sel(longitude=lon_range)
+    snow_depth_map = snow_depth_mon.sel(latitude = lat_range).sel(longitude = lon_range)
     return snow_depth_map
     
 
-def plot_allyears(lon,lat,month,years):
+def plot_snowdepth(lon,lat,month,years, filepath = None):
+    """Plots snow depth around the selected city
+    the average of snow depth over a certain period of time until the end of data (2018),
+    for a selected month.
+    
+    Parameters
+    -------
+    lon: float, longitude of the selected city
+    lat: float, latitude of the selected city
+    month: int, selected month (input)
+    years: int, number of years which should be avereged (until 2018)
+
+    """
     
     d_lon = 2
     d_lat = 2
@@ -94,7 +93,7 @@ def plot_allyears(lon,lat,month,years):
     year_begin = 2018-years
    
     
-    
+    g, ax = plt.subplots(figsize=(6,4))
     ax = plt.axes(projection=ccrs.PlateCarree())
     #ax.stock_img()
     #from mpl_toolkits.basemap import Basemap
@@ -116,8 +115,9 @@ def plot_allyears(lon,lat,month,years):
     plt.title(f'Snow depth (in m) averaged ({year_begin} - 2018) in {month_label[month]}');
 
 
-    
-
-plot_allyears(11,47,2,5)
-
+    if filepath is not None:
+        plt.savefig(filepath, dpi=150)
+        plt.close()
+        
+    return g
 
