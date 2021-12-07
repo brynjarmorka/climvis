@@ -2,52 +2,75 @@
 import os
 from pathlib import Path
 
-no_cru = 'The CRU and ERA5 files are not available on this system. For cruvis (part of the climvis package) to work properly,\n'\
-         'please create a file called ".climvis.txt" in your HOME directory*, and indicate the path to the CRU '\
-         f'directory in it.\n*Your HOME directory is "{os.path.expanduser("~")}." '\
-         'The ERA5 data is here available: https://fabienmaussion.info/climate_system/download.html'\
-         'and download the file: ERA5_LowRes_Monthly_snow.nc'
+# Hard coded overview over the required data files.
+required_data_files = [
+    "cru_ts4.03.1901.2018.tmp.dat.nc",
+    "cru_ts4.03.1901.2018.pre.dat.nc",
+    "cru_cl1_topography.nc",
+    "ERA5_LowRes_Monthly_snow.nc",
+]
+
+no_cru = (
+    'The CRU and ERA5* files are not available on this system. For cruvis (part of the climvis package) to work '
+    'properly, please create a file called ".climvis.txt" in your HOME directory**, and indicate the path to the data '
+    'folder directory in it. \n\n'
+    f'Required data files are: {required_data_files}\n\n'
+    '*The ERA5 data is here available: https://fabienmaussion.info/climate_system/download.html.'
+    f'**Your HOME directory is "{os.path.expanduser("~")}".\n'
+)
 
 
 def get_cru_dir():
     """
-    Author: Brynjar
     Short functions which reads the "~/.climvis" and gives it as the dirname for the CRU files. If the .climvis file
-    does not exist, the try/except at line 26 will throw an error.
+    does not exist, the try/except below will throw an error.
+
+    get_cru_dir() assumes that the .climvis.txt contains only the path, with eventually some whitespace
+
+    Author: Brynjar
 
     Returns
     -------
     string
         local path for CRU files
     """
-    path = Path("~/.climvis.txt")
+    path = Path("~/.climvis.txt")  # Accessing the HOME dir of the user
     full_path = os.path.expanduser(path)
-    f = open(full_path, 'r')
+    f = open(full_path, "r")
     local_path = f.read()
+    local_path.replace('\n', '')  # Removes any potential newlines in the file
     f.close()
     return local_path
 
 
-# first make the filenames
+# First make the filenames
+# Remember to update the list required_data_files when more data files are added here
 try:
     cru_dir = Path(get_cru_dir())
     cru_tmp_file = cru_dir / "cru_ts4.03.1901.2018.tmp.dat.nc"
     cru_pre_file = cru_dir / "cru_ts4.03.1901.2018.pre.dat.nc"
     cru_topo_file = cru_dir / "cru_cl1_topography.nc"
-    era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc" # downloaded from: https://fabienmaussion.info/climate_system/download.html
+    era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc"
 except Exception as exc:
+    print(f'Could not find the file at "{os.path.expanduser("~")}/.climvis.txt"')
     raise FileNotFoundError(no_cru)
 
-# then check if the files actually exists
-if cru_topo_file.exists() and cru_pre_file.exists() and cru_topo_file.exists() and era5_snow_file.exists():
-    print("CRU files successfully found.")
+# Then check if the files actually exists
+if (
+    cru_topo_file.exists()
+    and cru_pre_file.exists()
+    and cru_topo_file.exists()
+    and era5_snow_file.exists()
+):
+    print("Data files successfully found.")
 else:
+    print('Unable to find the datafiles. Make sure that the ".climvis.txt" file only contains the data folder path.')
     raise FileNotFoundError(no_cru)
 
-
+# Making some path names
 bdir = os.path.dirname(__file__)
 html_tpl = os.path.join(bdir, "data", "template.html")
 html_tpl_uibkvis = os.path.join(bdir, "data", "uibkvis_template.html")
 world_cities = os.path.join(bdir, "data", "world_cities_41k.csv")
 
-default_zoom = 8
+default_zoom = 8  # Default zoom for the google maps image
