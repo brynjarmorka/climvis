@@ -3,7 +3,7 @@ import json
 import os
 import numpy as np
 import pandas as pd
-
+import pytest
 from climvis import core, cfg
 
 
@@ -77,3 +77,11 @@ def test_open_cities_file():
     cities = core.open_cities_file()
     assert type(cities) == pd.core.frame.DataFrame
     assert cities.columns[1] == 'Name'
+    
+def test_valid_month():
+    
+    with pytest.raises(ValueError, match = 'The number was not valid. The month is between 1 and 12.'):
+        core.valid_month(int(13))
+        
+    with pytest.raises(TypeError, match = 'The month should be an integer'):
+        core.valid_month('month')
