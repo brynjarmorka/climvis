@@ -149,8 +149,7 @@ def write_html(lon, lat, directory=None, zoom=None):
     graphics.plot_annual_cycle(df, filepath=png)
     climate_change.plot_timeseries(df, filepath = png2)
     
-    month_snow = int(input('Which month should be shown? Please give the number of the month.'))
-    valid_month(month_snow)
+    month_snow = valid_month()
     snow.plot_snowdepth(lon,lat,month_snow,5, filepath = png_snow)
     snow.plot_snowdepth(lon,lat,month_snow,40, filepath = png_snow2)
     
@@ -226,7 +225,7 @@ def coordinates_city(city):
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
 
-def valid_month(month):
+def valid_month():
     """
     Test if the input month is valid. In this month the snow data is viusalized.
     
@@ -245,9 +244,11 @@ def valid_month(month):
         When the ``month`` is not between 1 and 12.
     
     """
-    
+    month = int(input('Which month should be shown? Please give the number of the month.'))
     #Test if input month is valid
     if type(month) != int:
         TypeError('The month should be an integer')
     if month not in np.linspace(1,12,12):
         ValueError('The number was not valid. The month is between 1 and 12.')
+
+    return month
