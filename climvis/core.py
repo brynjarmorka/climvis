@@ -259,7 +259,7 @@ def valid_month(month):
         When the ``month`` is not between 1 and 12.
     
     """   
-    #Test if input month is valid
+   
     if type(month) != int:
         raise TypeError('The month should be an integer')
     if month not in np.linspace(1,12,12):
