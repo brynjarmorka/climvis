@@ -8,20 +8,17 @@ Takes ERA5 data of snow depth (and snow densitiy) to visualize th snow depth at 
 The user (tourist) can see, where the most snow is in average.
 """
 
-# function for a plot on snow cover
-
 from climvis import cfg, core, graphics
 import matplotlib.pyplot as plt  # plotting library
+import matplotlib
 import numpy as np  # numerical library
 import xarray as xr  # netCDF library
 import cartopy  # Map projections libary
 import cartopy.crs as ccrs  # Projections list
 import cartopy.feature as cfeature
-import matplotlib.ticker as mticker
 from cartopy.mpl.ticker import (LongitudeFormatter, LatitudeFormatter,
                                 LatitudeLocator)
 import datetime
-# Some defaults:
 
 
 
@@ -72,6 +69,7 @@ def extract_map_part(lon,lat,month, years):
     snow_depth_year = snow_depth.sel(time = slice(str(year_begin), '2019'))
     snow_depth_mon = snow_depth_year.groupby('time.month').mean().sel(month = month)
     snow_depth_map = snow_depth_mon.sel(latitude = lat_range).sel(longitude = lon_range)
+    
     return snow_depth_map
     
 
@@ -89,10 +87,11 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
 
     """
     
+    
     d_lon = 2
     d_lat = 2
+    
     snow_depth_map = extract_map_part(lon,lat,month,years)
-    int(years)
     year_begin = 2018-years
    
     
@@ -110,20 +109,23 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
     #ax = Basemap(width=12000000,height=9000000,projection='lcc',
                 #resolution=None,lat_1=45.,lat_2=55,lat_0=50,lon_0=-107.)
     #ax.shadedrelief()
-    snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = 10, vmin = 0, alpha = 0.7)
+    
+    snowdepth_max = np.round(np.max(snow_depth_map),decimals = 1)
+    
+    levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 1)
+    ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 1)
+    
+    snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = levels, vmin = 0, alpha = 0.7, cbar_kwargs={'label': 'm', 'ticks' : ticks})
+    
     plt.plot(lon,lat,'rx', ms = 12, mew = 3) #Plot selected point
     ax.add_feature(cartopy.feature.BORDERS);
     ax.coastlines();
-    ax.set_xlim(lon - d_lon, lon + d_lon)
-    ax.set_ylim(lat - d_lat, lat + d_lat)
     gl = ax.gridlines(draw_labels=True)
     gl.top_labels = False
     gl.right_labels = False
-   # gl.xlocator = mticker.FixedLocator(np.linspace(lon - d_lon, lon + d_lon,1))
-    #gl.xformatter = LongitudeFormatter()
     month_label = ['January','February','March', 'April', 'May', 'June', 'July', 'August', 'September', 'Ocotber', 'November', 'December']
-    plt.title(f'Snow depth (in m) averaged ({year_begin} - 2018) in {month_label[month]}');
-
+    plt.title(f'Snow depth (in m) averaged (over {year_begin} - 2018) in {month_label[month-1]}');
+    
 
     if filepath is not None:
         plt.savefig(filepath, dpi=150)
@@ -131,5 +133,5 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
         
     return g
 
-ax = plot_snowdepth(11,47,2,5, filepath = None)
 
+ax = plot_snowdepth(11,47,2,5, filepath = None)

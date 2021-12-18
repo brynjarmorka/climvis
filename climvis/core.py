@@ -133,6 +133,7 @@ def write_html(lon, lat, directory=None, zoom=None):
     png = os.path.join(directory, "annual_cycle.png")
     png2 = os.path.join(directory, "annual_tmp_averages.png")
     png_snow = os.path.join(directory, "snow_depth_averages.png")
+    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
@@ -147,7 +148,11 @@ def write_html(lon, lat, directory=None, zoom=None):
     
     graphics.plot_annual_cycle(df, filepath=png)
     climate_change.plot_timeseries(df, filepath = png2)
-    snow.plot_snowdepth(lon,lat,2,5, filepath = png_snow)
+    
+    month_snow = int(input('Which month should be shown? Please give the number of the month.'))
+    valid_month(month_snow)
+    snow.plot_snowdepth(lon,lat,month_snow,5, filepath = png_snow)
+    snow.plot_snowdepth(lon,lat,month_snow,40, filepath = png_snow2)
     
 
     outpath = os.path.join(directory, "index.html")
@@ -175,7 +180,8 @@ def open_cities_file():
     
     Returns
     -------
-    cities: pd Data Frame of country, city, longitude, latitude, elevation
+    panda DataFrame
+        country, name, longitude, latitude, elevation of cities.
     """
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
     world_cities = cfg.world_cities
@@ -203,16 +209,45 @@ def coordinates_city(city):
     
     author: Paula
     
-    Paramters
+    Parameters
     -------
-    city: City, which is asked for (Argument)
-    country: Country, in which asked city is located (Argument)
+    city : str
+        City, which is selected (argument)
+    country : str
+        Country, in which selected city is located (argument)
     
     Returns
     -------
-    coord_city = pd DataFrame of asked city (incl Country, Name, lon, lat, elevation)
+    panda DataFrame
+        country, name, longitude, latitude, elevation of selected city.
     
     """
     cities = open_cities_file()
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
+
+def valid_month(month):
+    """
+    Test if the input month is valid. In this month the snow data is viusalized.
+    
+    author: Paula
+    
+    Parameters
+    -------
+    month : str
+        In this month the snow data is viusalized.
+        
+    Raises
+    -------
+    TypeError
+        When the type of ``month`` is not an integer.
+    ValueError
+        When the ``month`` is not between 1 and 12.
+    
+    """
+    
+    #Test if input month is valid
+    if type(month) != int:
+        TypeError('The month should be an integer')
+    if month not in np.linspace(1,12,12):
+        ValueError('The number was not valid. The month is between 1 and 12.')
