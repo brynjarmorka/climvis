@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
-from climvis import core, cfg
+from climvis import core, cfg, climate_change, cli
 
 
 def test_get_ts():
@@ -68,9 +68,11 @@ def test_write_html(tmpdir):
     dfi = df_cities.loc[
         df_cities.Name.str.contains("innsbruck", case=False, na=False)
     ].iloc[0]
-
+    
+    add_clim_change = 'yes'   #changes made!!!!!
+    
     dir = str(tmpdir.join("html_dir"))
-    core.write_html(dfi.Lon, dfi.Lat, directory=dir)
+    core.write_html(dfi.Lon, dfi.Lat, add_clim_change, directory=dir)
     assert os.path.isdir(dir)
     
 def test_open_cities_file():

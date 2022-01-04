@@ -4,6 +4,10 @@
 import climvis
 import pytest
 from climvis.cli import cruvis_io
+from unittest import mock
+from climvis.core import get_month, get_cru_timeseries
+from climvis.climate_change import plot_timeseries
+#from climvis.climate_change import user_input
 
 
 def test_help(capsys):
@@ -28,19 +32,23 @@ def test_version(capsys):
     cruvis_io(["-v"])
     captured = capsys.readouterr()
     assert climvis.__version__ in captured.out
+    
+def test_get_month():
+    
+    with mock.patch('builtins.input', return_value=1):
+        assert get_month()==1
+    with mock.patch('builtins.input', return_value=5):
+        assert get_month()==5
+    with mock.patch('builtins.input', return_value=10):
+        assert get_month()==10
 
 
-def test_print_html(capsys):
-
+def test_print_html(capsys):#, monkeypatch):
+        
     cruvis_io(["-l", "Berlin", "Germany", "--no-browser"])
     captured = capsys.readouterr()
     assert "File successfully generated at:" in captured.out
     
-#def test_print_html2(capsys):
-
-    #cruvis_io(["-l", "Innsbruck", "--no-browser"])
-    #captured = capsys.readouterr()
-    #assert "File successfully generated at:" in captured.out
 
 
 def test_error_1argument(capsys):

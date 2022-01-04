@@ -10,6 +10,10 @@ Usage:
    -l, --loc [city] [country] : the city at which the climate data must be
                                extracted (if the city exists more often than once
                                           the country is necassary)
+   -c, --climate              : adds additional climate change information 
+                                in form of temperature timeseries and the average 
+                                temperature of certain periods which we user can 
+                                choose per input 
    --no-browser               : the default behavior is to open a browser with the
                                newly generated visualisation. Set to ignore
                                and print the path to the html file instead
@@ -19,7 +23,7 @@ Usage:
 def cruvis_io(args):
     """The actual command line tool.
 
-    changed by Paula
+    changed by Paula and Leo
 
     Parameters
     ----------
@@ -34,16 +38,32 @@ def cruvis_io(args):
     elif args[0] in ["-v", "--version"]:
         print("cruvis: " + climvis.__version__)
         print("License: public domain")
-        print('cruvis is provided "as is", without warranty of any kind')
+        print('cruvis is provided "as is", without warranty of any kind')  
     elif args[0] in ["-l", "--loc"]:
         if len(args) < 2:
             print("cruvis --loc needs city parameter!")
             return
+        
+        #changes made!!!!!!!!
+        #check if the user wants additional temperature timeseries
+        if "-c" in args:
+            add_clim_change = 'yes'
+        elif "--climate" in args:
+            add_clim_change = 'yes'
+        else:
+            add_clim_change = 'no'
+            print("for additional temperature timeseries as climate change information add -c")
 
+            
         # extract city and country argment if --no-browser is in argument
-        args2 = args
+        args2 = args.copy()
         if "--no-browser" in args:
-            args2 = args[:-1]
+            args.remove("--no-browser")   #changes made!!!
+            #args2 = args[:-1]
+        if "-c" in args:
+            args.remove("-c")
+        if "--climate" in args:
+            args.remove("--climate")
 
         # get coordinates of asked city
         city = args[1]
@@ -51,7 +71,7 @@ def cruvis_io(args):
 
         # Check if there are more cities with the same name
         if len(coord) > 1:
-            if len(args2) == 3:
+            if len(args) == 3:  #changes made!!!!
                 country = args[2]
                 coord = coord[(coord['Country'] == country)]
             else:
@@ -80,19 +100,21 @@ def cruvis_io(args):
                 f'try another city nearby! Also, cities with whitespace must be written with quotation marks.')
 
         # Check if given city is in given country
-        if len(args2) == 3:
+        if len(args) == 3:   
             country = args[2]
             if (coord['Country'] != country).item():
                 raise ValueError(f'The city {city} does not exist in {country}')
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
+        
 
-        html_path = climvis.write_html(lon, lat)
-        if "--no-browser" in args:
+        html_path = climvis.write_html(lon, lat, add_clim_change)    
+        if "--no-browser" in args2:                                  
             print("File successfully generated at: " + html_path)
         else:
             webbrowser.get().open_new_tab("file://" + html_path)
+            
     else:
         print(
             "cruvis: command not understood. " 'Type "cruvis --help" for usage options.'

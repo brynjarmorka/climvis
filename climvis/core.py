@@ -67,9 +67,12 @@ def get_cru_timeseries(lon, lat):
     with xr.open_dataset(cfg.cru_pre_file) as ds:
         pre_ts = ds.pre.sel(lon=lon, lat=lat, method="nearest")
         df["pre"] = pre_ts.to_series()
+    with xr.open_dataset(cfg.cru_frs_file) as ds:
+        frs_ts = ds.frs.sel(lon=lon, lat=lat, method="nearest")
+        df["frs"] = frs_ts.to_series()    
     with xr.open_dataset(cfg.cru_topo_file) as ds:
         z = float(ds.z.sel(lon=lon, lat=lat, method="nearest"))
-
+    
     df.grid_point_elevation = z
     df.distance_to_grid_point = haversine(
         lon, lat, float(pre_ts.lon), float(pre_ts.lat)
@@ -111,7 +114,15 @@ def mkdir(path, reset=False):
     return path
 
 
-def write_html(lon, lat, directory=None, zoom=None):
+def write_html(lon, lat, add_clim_change, directory=None, zoom=None): #add_clim_change
+    """writes the html webpage
+    
+    changed by Leo 
+    Change 1 is a short piece of code, which checks for NaN and throws a Error + Message 
+    to the User that his chosen location migth be somewhere in the oceans
+    
+    Change 2 is in order to display additional climate change information,
+    if the user wants to have it"""
 
     # Set defaults
     if directory is None:
@@ -137,25 +148,32 @@ def write_html(lon, lat, directory=None, zoom=None):
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
-    """ 
-    Author: Leo
-    short piece of code, which checks for NaN and throws a Error + Message 
-    to the User that his chosen location migth be somewhere in the oceans
-    """
     if df.isnull().values.any():
         sys.exit('''Only land data is covered in this dataset!!!
                  Your coordinates might be located somewhere in the oceans!''')
     
     graphics.plot_annual_cycle(df, filepath=png)
-    climate_change.plot_timeseries(df, filepath = png2)
     
+    #check if the user wants to have additional temperature timeseries
+    if add_clim_change == 'yes':
+        #if __name__ == "__main__":
+        climate_change.plot_timeseries(df, filepath = png2)
+        #choose html template which includes climate change graphics
+        html_tpl = cfg.html_tpl_clim_change
+    
+    #choose html template which doesn't include climate change graphics
+    elif add_clim_change == 'no':
+        html_tpl = cfg.html_tpl
+    
+    #choosing the month for the snow information
+    #if __name__ == "__main__":
     month_snow = get_month()
     snow.plot_snowdepth(lon,lat,month_snow,5, filepath = png_snow)
     snow.plot_snowdepth(lon,lat,month_snow,40, filepath = png_snow2)
     
 
     outpath = os.path.join(directory, "index.html")
-    with open(cfg.html_tpl, "r") as infile:
+    with open(html_tpl, "r") as infile:
         lines = infile.readlines()
         out = []
         url = get_googlemap_url(lon, lat, zoom=zoom)

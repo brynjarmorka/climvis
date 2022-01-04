@@ -6,6 +6,7 @@ from pathlib import Path
 required_data_files = [
     "cru_ts4.03.1901.2018.tmp.dat.nc",
     "cru_ts4.03.1901.2018.pre.dat.nc",
+    "cru_ts4.03.1901.2018.frs.dat.nc",
     "cru_cl1_topography.nc",
     "ERA5_LowRes_Monthly_snow.nc",
 ]
@@ -49,6 +50,7 @@ try:
     cru_dir = Path(get_cru_dir())
     cru_tmp_file = cru_dir / "cru_ts4.03.1901.2018.tmp.dat.nc"
     cru_pre_file = cru_dir / "cru_ts4.03.1901.2018.pre.dat.nc"
+    cru_frs_file = cru_dir / "cru_ts4.03.1901.2018.frs.dat.nc"
     cru_topo_file = cru_dir / "cru_cl1_topography.nc"
     era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc"
 except Exception as exc:
@@ -59,6 +61,7 @@ except Exception as exc:
 if (
     cru_topo_file.exists()
     and cru_pre_file.exists()
+    and cru_frs_file.exists()
     and cru_topo_file.exists()
     and era5_snow_file.exists()
 ):
@@ -70,6 +73,7 @@ else:
 # Making some path names
 bdir = os.path.dirname(__file__)
 html_tpl = os.path.join(bdir, "data", "template.html")
+html_tpl_clim_change = os.path.join(bdir, "data", "clim_change_template.html")
 html_tpl_uibkvis = os.path.join(bdir, "data", "uibkvis_template.html")
 world_cities = os.path.join(bdir, "data", "world_cities_41k.csv")
 
