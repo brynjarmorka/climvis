@@ -209,7 +209,7 @@ def open_cities_file():
     """
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
     world_cities = cfg.world_cities
-    cityfile = open(world_cities)
+    cityfile = open(world_cities,encoding= "windows-1252")
     reader = csv.reader(cityfile)
     # read header (first row)
     header = next(reader)

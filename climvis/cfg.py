@@ -39,7 +39,7 @@ def get_cru_dir():
     full_path = os.path.expanduser(path)
     f = open(full_path, "r")
     local_path = f.read()
-    local_path.replace('\n', '')  # Removes any potential newlines in the file
+    local_path = local_path.replace('\n','')  # Removes any potential newlines in the file
     f.close()
     return local_path
 
@@ -47,12 +47,12 @@ def get_cru_dir():
 # First make the filenames
 # Remember to update the list required_data_files when more data files are added here
 try:
-    cru_dir = Path(get_cru_dir())
-    cru_tmp_file = cru_dir / "cru_ts4.03.1901.2018.tmp.dat.nc"
-    cru_pre_file = cru_dir / "cru_ts4.03.1901.2018.pre.dat.nc"
-    cru_frs_file = cru_dir / "cru_ts4.03.1901.2018.frs.dat.nc"
-    cru_topo_file = cru_dir / "cru_cl1_topography.nc"
-    era5_snow_file = cru_dir / "ERA5_LowRes_Monthly_snow.nc"
+    cru_dir = get_cru_dir()
+    cru_tmp_file = Path(cru_dir,"cru_ts4.03.1901.2018.tmp.dat.nc")
+    cru_pre_file = Path(cru_dir,"cru_ts4.03.1901.2018.pre.dat.nc")
+    cru_frs_file = Path(cru_dir,"cru_ts4.03.1901.2018.frs.dat.nc")
+    cru_topo_file = Path(cru_dir,"cru_cl1_topography.nc")
+    era5_snow_file = Path(cru_dir,"ERA5_LowRes_Monthly_snow.nc")
 except Exception as exc:
     print(f'Could not find the file at "{os.path.expanduser("~")}/.climvis.txt"')
     raise FileNotFoundError(no_cru)
