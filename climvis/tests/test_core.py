@@ -62,6 +62,7 @@ def test_get_url():
     assert "maps.google" in url
 
 
+
 def test_write_html(tmpdir):
 
     df_cities = pd.read_csv(cfg.world_cities, encoding="windows-1252")
@@ -70,9 +71,12 @@ def test_write_html(tmpdir):
     ].iloc[0]
     
     add_clim_change = 'yes'   #changes made!!!!!
+    timespan = [1901, 1970, 1971, 2018]
+    month = 2
+    city = "Innsbruck"
     
     dir = str(tmpdir.join("html_dir"))
-    core.write_html(dfi.Lon, dfi.Lat, add_clim_change, directory=dir)
+    core.write_html(dfi.Lon, dfi.Lat, add_clim_change, timespan, month, city, directory=dir)
     assert os.path.isdir(dir)
     
 def test_open_cities_file():
@@ -83,7 +87,7 @@ def test_open_cities_file():
 def test_valid_month():
     
     with pytest.raises(ValueError, match = 'The number was not valid. The month is between 1 and 12.'):
-        core.valid_month(int(13))
+        cli.valid_month(int(13))
         
     with pytest.raises(TypeError, match = 'The month should be an integer'):
-        core.valid_month('month')
+        cli.valid_month('month')

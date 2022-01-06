@@ -114,15 +114,20 @@ def mkdir(path, reset=False):
     return path
 
 
-def write_html(lon, lat, add_clim_change, directory=None, zoom=None): #add_clim_change
+def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None, zoom=None): 
     """writes the html webpage
     
-    changed by Leo 
+    changed by Leo and Paula
     Change 1 is a short piece of code, which checks for NaN and throws a Error + Message 
     to the User that his chosen location migth be somewhere in the oceans
     
     Change 2 is in order to display additional climate change information,
-    if the user wants to have it"""
+    if the user wants to have it and choose the corresponding html template
+    
+    Change 3 is in order to display the snow cover during the chosen month
+    
+    returns the html path, which is either printed or used to open a html webpage
+    later on"""
 
     # Set defaults
     if directory is None:
@@ -155,9 +160,10 @@ def write_html(lon, lat, add_clim_change, directory=None, zoom=None): #add_clim_
     graphics.plot_annual_cycle(df, filepath=png)
     
     #check if the user wants to have additional temperature timeseries
+    #and choose the corresponding html template
     if add_clim_change == 'yes':
         #if __name__ == "__main__":
-        climate_change.plot_timeseries(df, filepath = png2)
+        climate_change.plot_timeseries(df, timespan, filepath = png2)
         #choose html template which includes climate change graphics
         html_tpl = cfg.html_tpl_clim_change
     
@@ -167,7 +173,7 @@ def write_html(lon, lat, add_clim_change, directory=None, zoom=None): #add_clim_
     
     #choosing the month for the snow information
     #if __name__ == "__main__":
-    month_snow = get_month()
+    month_snow = month
     snow.plot_snowdepth(lon,lat,month_snow,5, filepath = png_snow)
     snow.plot_snowdepth(lon,lat,month_snow,40, filepath = png_snow2)
     
@@ -177,7 +183,8 @@ def write_html(lon, lat, add_clim_change, directory=None, zoom=None): #add_clim_
         lines = infile.readlines()
         out = []
         url = get_googlemap_url(lon, lat, zoom=zoom)
-        city = cli.sys.argv[2]
+        city = city
+        #city = cli.sys.argv[2]
         for txt in lines:
             txt = txt.replace("[LONLAT]", lonlat_str)
             txt = txt.replace("[IMGURL]", url)
@@ -243,42 +250,46 @@ def coordinates_city(city):
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
 
-def get_month():
-    """
-    Get month for which the snow data is viusalized.
-    
-    author: Paula
-    
-    Returns
-    -------
-    int
-        Month for which data is shown
-    """
-    month = int(input('Which month should be shown? Please give the number of the month.'))
-    valid_month(month)
-    return month
+# =============================================================================
+# def get_month():
+#     """
+#     Get month for which the snow data is viusalized.
+#     
+#     author: Paula
+#     
+#     Returns
+#     -------
+#     int
+#         Month for which data is shown
+#     """
+#     month = int(input('Which month should be shown? Please give the number of the month.'))
+#     valid_month(month)
+#     return month
+# =============================================================================
 
-def valid_month(month):
-    """
-    Test if the input month is valid. In this month the snow data is viusalized.
-    
-    author: Paula
-    
-    Parameters
-    -------
-    month : int
-        Month for which data is shown
-        
-    Raises
-    -------
-    TypeError
-        When the type of ``month`` is not an integer.
-    ValueError
-        When the ``month`` is not between 1 and 12.
-    
-    """   
-   
-    if type(month) != int:
-        raise TypeError('The month should be an integer')
-    if month not in np.linspace(1,12,12):
-        raise ValueError('The number was not valid. The month is between 1 and 12.')
+# =============================================================================
+# def valid_month(month):
+#     """
+#     Test if the input month is valid. In this month the snow data is viusalized.
+#     
+#     author: Paula
+#     
+#     Parameters
+#     -------
+#     month : int
+#         Month for which data is shown
+#         
+#     Raises
+#     -------
+#     TypeError
+#         When the type of ``month`` is not an integer.
+#     ValueError
+#         When the ``month`` is not between 1 and 12.
+#     
+#     """   
+#    
+#     if type(month) != int:
+#         raise TypeError('The month should be an integer')
+#     if month not in np.linspace(1,12,12):
+#         raise ValueError('The number was not valid. The month is between 1 and 12.')
+# =============================================================================

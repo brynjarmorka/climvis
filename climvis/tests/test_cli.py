@@ -3,33 +3,31 @@
 # can test that
 import climvis
 import pytest
-from climvis.cli import cruvis_io
+from climvis.cli import cruvis_io, get_month, user_input
 from unittest import mock
-from climvis.core import get_month, get_cru_timeseries
-from climvis.climate_change import plot_timeseries
-#from climvis.climate_change import user_input
+
 
 
 def test_help(capsys):
 
     # Check that with empty arguments we return the help
-    cruvis_io([])
+    cruvis_io([], [], [], [])
     captured = capsys.readouterr()
     assert "Usage:" in captured.out
     print(captured.out)
 
-    cruvis_io(["-h"])
+    cruvis_io(["-h"], [], [], [])
     captured = capsys.readouterr()
     assert "Usage:" in captured.out
 
-    cruvis_io(["--help"])
+    cruvis_io(["--help"], [], [], [])
     captured = capsys.readouterr()
     assert "Usage:" in captured.out
 
 
 def test_version(capsys):
 
-    cruvis_io(["-v"])
+    cruvis_io(["-v"], [], [], [])
     captured = capsys.readouterr()
     assert climvis.__version__ in captured.out
     
@@ -41,11 +39,22 @@ def test_get_month():
         assert get_month()==5
     with mock.patch('builtins.input', return_value=10):
         assert get_month()==10
+        
+def test_user_input():
+    
+    with mock.patch('builtins.input', return_value="yes"):
+        assert user_input()=='yes'
+    with mock.patch('builtins.input', return_value="no"):
+        assert user_input()=='no'
+    
 
 
 def test_print_html(capsys):#, monkeypatch):
         
-    cruvis_io(["-l", "Berlin", "Germany", "--no-browser"])
+    timespan = [1901, 1970, 1971, 2018]
+    month = 2
+    add_clim_change = "yes"
+    cruvis_io(["-l", "Berlin", "Germany", "--no-browser"], timespan, month, add_clim_change)
     captured = capsys.readouterr()
     assert "File successfully generated at:" in captured.out
     
@@ -53,7 +62,7 @@ def test_print_html(capsys):#, monkeypatch):
 
 def test_error_1argument(capsys):
 
-    cruvis_io(["-l"])
+    cruvis_io(["-l"], [], [], [])
     captured = capsys.readouterr()
     assert "cruvis --loc needs city parameter!" in captured.out
 
@@ -64,15 +73,16 @@ def test_error_1argument(capsys):
 #                                  'Please add the country of the city as input!'):
 #         cruvis_io(["-l", "Berlin"])
 
+
 def test_error_wrongcountry(capsys):
     
     with pytest.raises(ValueError, match = 'The city Innsbruck does not exist in Germany'):
-        cruvis_io(["-l", "Innsbruck", "Germany"])
+        cruvis_io(["-l", "Innsbruck", "Germany"], [], [], [])
         
 def test_error_not_available_city():
     # The available city in the list is Munich
     with pytest.raises(ValueError, match = 'The city München -and corresponding country- does not exist in the available list of cities. Please try another city nearby!'):
-        cruvis_io(["-l", "München"])
+        cruvis_io(["-l", "München"], [], [], [])
     
 
     
