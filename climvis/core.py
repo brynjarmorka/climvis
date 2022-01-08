@@ -67,9 +67,9 @@ def get_cru_timeseries(lon, lat):
     with xr.open_dataset(cfg.cru_pre_file) as ds:
         pre_ts = ds.pre.sel(lon=lon, lat=lat, method="nearest")
         df["pre"] = pre_ts.to_series()
-    with xr.open_dataset(cfg.cru_frs_file) as ds:
-        frs_ts = ds.frs.sel(lon=lon, lat=lat, method="nearest")
-        df["frs"] = frs_ts.to_series()    
+#    with xr.open_dataset(cfg.cru_frs_file) as ds:
+#        frs_ts = ds.frs.sel(lon=lon, lat=lat, method="nearest")
+#        df["frs"] = frs_ts.to_series()    
     with xr.open_dataset(cfg.cru_topo_file) as ds:
         z = float(ds.z.sel(lon=lon, lat=lat, method="nearest"))
     

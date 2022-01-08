@@ -6,7 +6,7 @@ from pathlib import Path
 required_data_files = [
     "cru_ts4.03.1901.2018.tmp.dat.nc",
     "cru_ts4.03.1901.2018.pre.dat.nc",
-    "cru_ts4.03.1901.2018.frs.dat.nc",
+#    "cru_ts4.03.1901.2018.frs.dat.nc",
     "cru_cl1_topography.nc",
     "ERA5_LowRes_Monthly_snow.nc",
 ]
@@ -50,7 +50,7 @@ try:
     cru_dir = get_cru_dir()
     cru_tmp_file = Path(cru_dir,"cru_ts4.03.1901.2018.tmp.dat.nc")
     cru_pre_file = Path(cru_dir,"cru_ts4.03.1901.2018.pre.dat.nc")
-    cru_frs_file = Path(cru_dir,"cru_ts4.03.1901.2018.frs.dat.nc")
+#    cru_frs_file = Path(cru_dir,"cru_ts4.03.1901.2018.frs.dat.nc")
     cru_topo_file = Path(cru_dir,"cru_cl1_topography.nc")
     era5_snow_file = Path(cru_dir,"ERA5_LowRes_Monthly_snow.nc")
 except Exception as exc:
@@ -61,7 +61,7 @@ except Exception as exc:
 if (
     cru_topo_file.exists()
     and cru_pre_file.exists()
-    and cru_frs_file.exists()
+#    and cru_frs_file.exists()
     and cru_topo_file.exists()
     and era5_snow_file.exists()
 ):
