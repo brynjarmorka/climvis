@@ -92,9 +92,14 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
+
+        Altitude = float(coord["Elevation"].item())
+        #if elev is None:
+
         if elev is True:
             Altitude = float(coord["Elevation"].item())
         elif elev is None:
+
             Altitude = None
         
         
@@ -116,9 +121,9 @@ def cruvis():
     
     changed by Leo
     
-    The code asks here for the needed userinput and hands it over to rest 
-    of the program. If the inputs were later on in the code some of the tests
-    would fail"""
+    The code asks here for the needed user input and calls the cruvis_io 
+    function with the user input as parameters
+    """
 
     # Minimal code because we don't want to test for sys.argv
     # (we could, but this is too complicated for now)
@@ -158,6 +163,37 @@ def cruvis():
 
 
 def user_input():
+
+#<<<<<<< HEAD
+    """
+    asks the user if additional climate change 
+    information is wanted 
+   
+    author: Leo
+     
+    Raises
+    ------ 
+    ValueError if input isn't yes or no
+     
+    Returns
+    -------
+    add_clim_change: string
+                     either 'yes' or 'no'
+    """
+# =============================================================================
+#      while True:
+#          try:
+#              add_clim_change = str(input('''do you want additional climate change information? 
+#              type either yes or no '''))
+#              if add_clim_change != 'yes' and add_clim_change != 'no':
+#                  raise ValueError('input has to be yes or no')
+#              break
+#          except ValueError:
+#              print('input has to be yes or no!')
+#      return add_clim_change
+# =============================================================================
+#=======
+
     """
     author: Leo
     
@@ -233,10 +269,93 @@ def valid_datetime(datetime):
             
             
 def get_timespan():
+
     """
     author: Leo
+    
+    short function which asks the user if additional climate change
+    information is wanted
+    returns one variable which equals "yes" or "no" which can be used in
+    if statements
+    """
+    while True:
+        try:
+            add_clim_change_and_solar = str(input(
+'''do you want additional climate change or solar information?
+    type either c, s, both or no '''))
+            if (add_clim_change_and_solar != 'c' 
+                and add_clim_change_and_solar != 'no'
+                and add_clim_change_and_solar != 's'
+                and add_clim_change_and_solar != 'both'):
+                raise ValueError('input has to beon of the following: c s both no')
+            break
+        except ValueError:
+            print('Invalid Input')
+    return add_clim_change_and_solar
+#>>>>>>> b432fef60468c60deb331768abbf6efc52c9ef75
+     
+
+def get_datetime():
+    """
+    author: Sebastian
+    
+    function to ask the user for a date in which he is interrested in the solar 
+    Position and UV-Index
+    -returns datestring
+    """
+    datetime = input("put in your date and time of interrest" +
+                             "in the format: yyyymmddHHMM \nor type no if" +
+                             "you want to use the current time: ")
+    return datetime
+
+
+def valid_datetime(datetime):
+    """
+    author: Sebastian
+    
+    validation if given input datetime is correct
+    -returns datestring
+    """
+    if not ((datetime == 'no') or (datetime.isdigit())):
+        raise TypeError('The datetime should be a 12 digit integer or no')
+    elif datetime =='no':
+        return datetime
+    else:
+        if len(datetime) != 12:
+            raise ValueError(''' the inputted datetime has to be 12 long''')
+        elif ((int(datetime[4]) == 1 and int(datetime[5]) > 2)
+                or int(datetime[4]) > 1):
+            raise ValueError(''' Something wrong in datetime, month: '''
+                             + datetime[4] + datetime[5]
+                             + '''doesn't exist''')
+        elif (int(datetime[8]) == 2 and int(datetime[9]) > 4
+                or int(datetime[8]) > 2):
+            raise ValueError(''' Something wrong in datetime, hour: '''
+                                 + datetime[8] + datetime[9]
+                                 + '''doesn't exist''')
+        elif int(datetime[10]) > 6:
+            raise ValueError(''' Something wrong in datetime, minute: '''
+                             + datetime[10] + datetime[11]
+                             + '''doesn't exist''')
+        else:
+            return datetime
+      
+            
+            
+def get_timespan():
+    """
     function to ask the user for the two timespans which he wants to compare
     returns a list of the 4 border years
+    author: Leo
+    
+    Raises
+    ------
+    ValueError if they aren't in ascending order or outside the datarange 
+    
+    Returns
+    -------
+    timespan: list of the 4 years 
+    
     """
     
     while True:
@@ -259,14 +378,30 @@ def get_timespan():
 
 def check_timespan(year1, year2, year3, year4):
     """
-    author: Leo
-    
     checks if the years for the timespans the user gets in the get_timespan() function
     are valid.
     
-    If not, a ValueError for a wrong order or wrong years is raised, if input isn't
-    an integer a TypeError is raised
-    If the input is valid, the function returns again a list of the 4 border years
+    author: Leo
+    
+    Parameters
+    ----------
+    year1-year4: int
+                 the 4 years which are given as an userinput two specify the 
+                 two compared timespans
+                 
+    Raises
+    ------
+    ValueError if there aren't 4 years 
+    ValueError if they aren't in ascending order or outside the datarange
+    TypeError  if they aren't given as an integer
+    
+    Return
+    ------
+    timespan: list of the 4 years 
+    
+    
+    
+    
     """
     
     timespan = [year1, year2, year3, year4]

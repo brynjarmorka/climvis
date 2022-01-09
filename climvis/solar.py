@@ -41,6 +41,13 @@ def calculate_hr_angle(lon, date):
     dectime = (float(dt.strftime(date, "%H"))
                + 1 / 60 * float(dt.strftime(date, "%M")))
     day = np.arange(0, 24, 1/12)  # 5 min intervallfor a day
+<<<<<<< HEAD
+    # calculating the rue local time for any given longitude
+    if dectime + lon / 15 < 24:
+        day = np.append(day, dectime + lon/15)
+    else:
+        day = np.append(day, dectime + lon/15 - 24)
+=======
     # calculating the true local time for any given longitude
     if dectime + lon / 15 < 0:
         day = np.append(day, dectime + lon/15 + 24)
@@ -49,6 +56,7 @@ def calculate_hr_angle(lon, date):
     else:
         day = np.append(day, dectime + lon/15)
 
+>>>>>>> 621badc53919590f7cca62bb63249d08fd795ff4
     #and the hour-angle for every five minutes
     hr_angle = day * 15 - 180
     return hr_angle, day
@@ -67,7 +75,11 @@ def calculate_azimuth_and_elevation(lat, lon, date=None):
     x = (np.sin(decl) * np.cos(np.deg2rad(lat)))
     y = np.cos(decl) * np.sin(np.deg2rad(lat)) * np.cos(np.deg2rad(hr_angle))
     azimuth = np.arccos((x - y) / np.cos(elevation))
+<<<<<<< HEAD
+    # arccos is limited to the rrange of (0 - 180°) so our part of the zircle
+=======
     # arccos is limited to the range of (0 - 180°) so our part of the zircle
+>>>>>>> 621badc53919590f7cca62bb63249d08fd795ff4
     # between 180° and 360° is mirrored
     azimuth_mirror = 2 * np.pi - azimuth[np.where(hr_angle > 0)]
     azimuth[np.where(hr_angle > 0)] = azimuth_mirror

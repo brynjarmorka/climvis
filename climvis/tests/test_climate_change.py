@@ -4,7 +4,7 @@ Created on Sun Dec 26 23:17:30 2021
 
 @author: Leo
 
-Tests for the climate change file
+Tests for the climate_change file
 """
 
 import pytest

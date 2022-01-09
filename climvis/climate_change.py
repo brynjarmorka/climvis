@@ -23,6 +23,22 @@ import matplotlib.pyplot as plt
 def calculate_mean(df, startyear, endyear):
     """calculates the mean temperature of the specified period
     and returns it as an floating number
+    
+    Parameters
+    ----------
+    df: pd.DataFrame
+        contains the Data which is read in in core.get_cru_timeseries:
+        temperature, precipitation, elevation
+    startyear: int
+               first year of the wanted period
+    endyear:   int
+               last year of the wanted period
+               
+    Returns
+    -------
+    mean_anual_tmp: float
+                    the average temperature in °C during the analyzed period    
+        
     """
     #divide the timeseries in two parts
     startyear = str(startyear)
@@ -39,6 +55,23 @@ def calculate_mean(df, startyear, endyear):
     return mean_anual_tmp
 
 def check_calculate_mean(mean_anual_tmp): 
+    """checks if the calculate_mean function works right
+    Parameters
+    ----------
+    mean_anual_tmp: float
+                    the average temperature of a certain period which should
+                    be checked
+    Raises
+    ------
+    TypeError if the type of the input Parameter isn't float
+    
+    Returns 
+    -------
+    mean_anual_tmp: float
+                    if the given Parameter has the right type it is returned
+             
+        
+    """
     
     if type(mean_anual_tmp) == float:
         return mean_anual_tmp
@@ -49,6 +82,17 @@ def plot_timeseries(df, timespan, filepath = None):
     """function to plot the overall timeseries of the temperature,
     and the average temperature of the specified periods and the overall 
     temperature average between 1901 and 2018
+    
+    Parameters
+    ----------
+    df: pd.DataFrame
+        contains the Data which is read in in core.get_cru_timeseries:
+        temperature, precipitation, elevation
+    timespan: list of 4 years which specify the two timespans of interest
+    
+    Returns
+    -------
+    g: the graphic which is plotted on the html page
     """
     
 
@@ -99,8 +143,6 @@ def plot_timeseries(df, timespan, filepath = None):
     return g
     
     
-#def frost_freq():
-    #function which gives/plots the number of frost days per year and plots the 
-    #timeseries of it
+
 
     
