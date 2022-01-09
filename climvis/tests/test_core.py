@@ -65,6 +65,11 @@ def test_get_url():
 
 def test_write_html(tmpdir):
 
+    """
+    changed by Leo
+    Test for write_html with the needed input parameters
+    """
+    
     df_cities = pd.read_csv(cfg.world_cities, encoding="windows-1252")
     dfi = df_cities.loc[
         df_cities.Name.str.contains("innsbruck", case=False, na=False)

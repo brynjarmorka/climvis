@@ -1,6 +1,12 @@
 # Testing command line interfaces is hard. But we'll try
 # At least we separated our actual program from the I/O part so that we
 # can test that
+"""
+changed by Leo
+Tests for the functions of the climvis.cli file with the needed input Parameters
+tried to test for user input with unittest.mock
+"""
+
 import climvis
 import pytest
 from climvis.cli import cruvis_io, get_month, user_input
@@ -32,6 +38,11 @@ def test_version(capsys):
     assert climvis.__version__ in captured.out
     
 def test_get_month():
+    """
+    testing for command line input
+    attempt to test if the get_month function works if 
+    the user input is valid
+    """
     
     with mock.patch('builtins.input', return_value=1):
         assert get_month()==1
@@ -41,6 +52,11 @@ def test_get_month():
         assert get_month()==10
         
 def test_user_input():
+    """
+    testing for command line input
+    attempt to test if the user_input function works if 
+    the user input is valid
+    """
     
     with mock.patch('builtins.input', return_value="yes"):
         assert user_input()=='yes'

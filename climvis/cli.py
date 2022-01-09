@@ -109,9 +109,9 @@ def cruvis():
     
     changed by Leo
     
-    The code asks here for the needed userinput and hands it over to rest 
-    of the program. If the inputs were later on in the code some of the tests
-    would fail"""
+    The code asks here for the needed user input and calls the cruvis_io 
+    function with the user input as parameters
+    """
 
     # Minimal code because we don't want to test for sys.argv
     # (we could, but this is too complicated for now)
@@ -140,12 +140,19 @@ def cruvis():
 
 def user_input():
      """
+     asks the user if additional climate change 
+     information is wanted 
+     
      author: Leo
      
-     short function which asks the user if additional climate change 
-     information is wanted
-     returns one variable which equals "yes" or "no" which can be used in 
-     if statements
+     Raises
+     ------ 
+     ValueError if input isn't yes or no
+     
+     Returns
+     -------
+     add_clim_change: string
+                      either 'yes' or 'no'
      """
      while True:
          try:
@@ -161,9 +168,18 @@ def user_input():
 
 def get_timespan():
     """
-    author: Leo
     function to ask the user for the two timespans which he wants to compare
     returns a list of the 4 border years
+    author: Leo
+    
+    Raises
+    ------
+    ValueError if they aren't in ascending order or outside the datarange 
+    
+    Returns
+    -------
+    timespan: list of the 4 years 
+    
     """
     
     while True:
@@ -186,14 +202,30 @@ def get_timespan():
 
 def check_timespan(year1, year2, year3, year4):
     """
-    author: Leo
-    
     checks if the years for the timespans the user gets in the get_timespan() function
     are valid.
     
-    If not, a ValueError for a wrong order or wrong years is raised, if input isn't
-    an integer a TypeError is raised
-    If the input is valid, the function returns again a list of the 4 border years
+    author: Leo
+    
+    Parameters
+    ----------
+    year1-year4: int
+                 the 4 years which are given as an userinput two specify the 
+                 two compared timespans
+                 
+    Raises
+    ------
+    ValueError if there aren't 4 years 
+    ValueError if they aren't in ascending order or outside the datarange
+    TypeError  if they aren't given as an integer
+    
+    Return
+    ------
+    timespan: list of the 4 years 
+    
+    
+    
+    
     """
     
     timespan = [year1, year2, year3, year4]
