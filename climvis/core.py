@@ -214,15 +214,11 @@ def open_cities_file(elev=None):
     panda DataFrame
         country, name, longitude, latitude, elevation of cities.
     """
-<<<<<<< HEAD
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
     if elev is True:
         world_cities = cfg.world_cities_elevation
     elif elev is None:
         world_cities = cfg.world_cities
-=======
-    world_cities = cfg.world_cities
->>>>>>> 3c75125f6a8e4490d88779d56bccf23a6b6ad3bd
     cityfile = open(world_cities,encoding= "windows-1252")
     reader = csv.reader(cityfile)
     # read header (first row)
