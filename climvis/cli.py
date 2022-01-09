@@ -92,8 +92,9 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
-        Altitude = float(coord["Elevation"].item())
-        if elev is None:
+        if elev is True:
+            Altitude = float(coord["Elevation"].item())
+        elif elev is None:
             Altitude = None
         
         
@@ -169,7 +170,10 @@ def user_input():
         try:
             add_clim_change_and_solar = str(input(
 '''do you want additional climate change or solar information?
-    type either c, s, both or no '''))
+    type either c       for climate info
+                s       for solar info
+                both    or 
+                no      for no additional info '''))
             if (add_clim_change_and_solar != 'c' 
                 and add_clim_change_and_solar != 'no'
                 and add_clim_change_and_solar != 's'
@@ -189,9 +193,9 @@ def get_datetime():
     Position and UV-Index
     -returns datestring
     """
-    datetime = input("put in your date and time of interrest" +
-                             "in the format: yyyymmddHHMM \nor type no if" +
-                             "you want to use the current time: ")
+    datetime = input("put in your date and time of interest in UTC "
+                             f"in the format: yyyymmddHHMM \nor type no if " 
+                             f"you want to use the current time: ")
     return datetime
 
 
