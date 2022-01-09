@@ -146,15 +146,18 @@ def translate_time(x):
     return y
 
 
-def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
-    lat, lon = np.rad2deg(lat), np.rad2deg(lon)
+def plot_solar_elevation(lat, lon, Altitude, date, filepath=None):
     if date =='no':
         date = dt.now(pytz.timezone('utc'))
+    else:
+        date = dt.strptime(date, "%Y%m%d%H%M")
     clist =(["lime"] * 3 + ["yellow"] * 3 + ["orangered"] * 3
             + ["magenta"] * 3)
     a = calculate_azimuth_and_elevation(lat, lon, date)
     b = get_sunrise_sunset(lat, lon, date)
     UVI, night = calculate_UV_Index(lat, lon, Altitude, date)
+    
+    
     fig = plt.figure()
     fig.text(0.15, -0.25, 'Valid local time: '
              + translate_time(calculate_hr_angle(lon, date)[1][-1])
@@ -208,8 +211,9 @@ def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
     if night is True:
         ax2.text(.5, 0.025, "It is night!", va="bottom", ha="center")
     ax2.set_facecolor(clist[min(round(UVI[0]), 12)])
+    
     if filepath is not None:
-        plt.savefig(filepath, dpi=150)
+        fig.savefig(filepath, dpi=150, bbox_inches="tight")
         plt.close()
     return fig
 #date=dt(2021,7,18,8,15)

@@ -50,7 +50,11 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         # get coordinates of asked city
         city = args[1]
-        coord = climvis.core.coordinates_city(city)
+        elev = None
+        if ((add_clim_change_and_solar == 's')
+            or (add_clim_change_and_solar =='both')):
+            elev=True
+        coord = climvis.core.coordinates_city(city,elev)
 
         # Check if there are more cities with the same name
         if len(coord) > 1:
@@ -80,7 +84,9 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
         if coord.empty:
             raise ValueError(
                 f'The city {city} -and corresponding country- does not exist in the available list of cities. Please '
-                f'try another city nearby! Also, cities with whitespace must be written with quotation marks.')
+                f'try another city nearby! Also, cities with whitespace must be written with quotation marks. '
+                f'If you tried to get solar information (s or both) the list of available cities is smaller. '
+                f'try also running the script without solar elevation (c or no)')
 
         # Check if given city is in given country
         if len(args) == 3:   
@@ -90,8 +96,10 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
-        #Altitude = float(coord["Elevation"].item())
-        Altitude=None
+        Altitude = float(coord["Elevation"].item())
+        if elev is None:
+            Altitude = None
+        
         
 
         html_path = climvis.write_html(lon, lat, add_clim_change_and_solar, timespan, month, city, date, Altitude)    
@@ -211,7 +219,7 @@ def valid_datetime(datetime):
                              + datetime[4] + datetime[5]
                              + '''doesn't exist''')
         elif (int(datetime[8]) == 2 and int(datetime[9]) > 4
-                or int(datetime[9]) > 2):
+                or int(datetime[8]) > 2):
             raise ValueError(''' Something wrong in datetime, hour: '''
                                  + datetime[8] + datetime[9]
                                  + '''doesn't exist''')

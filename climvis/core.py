@@ -148,8 +148,9 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude,
     # Make the plot
     png = os.path.join(directory, "annual_cycle.png")
     png2 = os.path.join(directory, "annual_tmp_averages.png")
+    png3 = os.path.join(directory, "solar_path.png")
     png_snow = os.path.join(directory, "snow_depth_averages.png")
-    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")
+    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")    
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
@@ -173,10 +174,10 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude,
     
     elif add_clim_change == 'both':
         climate_change.plot_timeseries(df, timespan, filepath = png2)
-        solar.plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None)
+        solar.plot_solar_elevation(lat, lon, Altitude, date, filepath = png3)
         html_tpl = cfg.html_tpl_clim_change_solar
     elif add_clim_change == 's':
-        solar.plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None)
+        solar.plot_solar_elevation(lat, lon, Altitude, date, filepath=png3)
         html_tpl = cfg.html_tpl_solar
     
     #choosing the month for the snow information
@@ -204,19 +205,22 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude,
     return outpath
 
 
-def open_cities_file():
+def open_cities_file(elev=None):
     """
     Opens file with cities and corresponding coordinates
     
     author: Paula
-    
+    modified with elevation variation: Sebastian
     Returns
     -------
     panda DataFrame
         country, name, longitude, latitude, elevation of cities.
     """
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
-    world_cities = cfg.world_cities
+    if elev is True:
+        world_cities = cfg.world_cities_elevation
+    elif elev is None:
+        world_cities = cfg.world_cities
     cityfile = open(world_cities,encoding= "windows-1252")
     reader = csv.reader(cityfile)
     # read header (first row)
@@ -235,7 +239,7 @@ def open_cities_file():
     return(cities)
 
 
-def coordinates_city(city):
+def coordinates_city(city, elev=None):
     """
     Extracts coordinates for the asked country
     
@@ -254,7 +258,7 @@ def coordinates_city(city):
         country, name, longitude, latitude, elevation of selected city.
     
     """
-    cities = open_cities_file()
+    cities = open_cities_file(elev)
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
 
