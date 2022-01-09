@@ -99,13 +99,20 @@ def calculate_UV_Index(lat, lon, Altitude, date=None):
                         + Atm_extinction_Petersburg
                         + Atm_extinction_Singapur
                         + Atm_extinction_Sydney) / 5
-    elevation = calculate_azimuth_and_elevation(lat, lon, date)[1][-1]
+    elevation_now = calculate_azimuth_and_elevation(lat, lon, date)[1][-1]
+    elevation_noon = calculate_azimuth_and_elevation(lat, lon, date)[1][144]
+    if elevation_now < 0:
+        elevation_now = 0
+        night = True
+    else:
+        night = False
+    elevation = [elevation_noon, elevation_now]
     # Pressureheight Standartatmosphere
     local_pressure = 1013.25 * (1 - 6.5 * Altitude / 288150) ** 5.255
     pressure_height = local_pressure / 1013.25
-    UVI = 1367 * np.sin(np.deg2rad(elevation)) ** 2 / (mean_Atm_extinct 
+    UVI = 1367 * np.sin(np.deg2rad(elevation)) ** 2 / (mean_Atm_extinct
                                                        * pressure_height)
-    return UVI
+    return UVI, night
 #    """ UV Index is defined as 0.04 m² W⁻¹ * spectral flux in UV range
 #    (lambda 280-400) Integrated with referenzspectrum"""
 #    elev = calculate_azimuth_and_elevation(lat, lon, date)[1]
@@ -143,10 +150,11 @@ def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
     lat, lon = np.rad2deg(lat), np.rad2deg(lon)
     if date is None:
         date = dt.now(pytz.timezone('utc'))
-    clist =["lime"] * 3 + ["yellow"] * 3 + ["orangered"] * 3 + ["magenta"] * 3
+    clist =(["lime"] * 3 + ["yellow"] * 3 + ["orangered"] * 3
+            + ["magenta"] * 3)
     a = calculate_azimuth_and_elevation(lat, lon, date)
     b = get_sunrise_sunset(lat, lon, date)
-    UVI = calculate_UV_Index(lat, lon, Altitude, date)
+    UVI, night = calculate_UV_Index(lat, lon, Altitude, date)
     fig = plt.figure()
     fig.text(0.15, -0.25, 'Valid local time: '
              + translate_time(calculate_hr_angle(lon, date)[1][-1])
@@ -155,8 +163,8 @@ def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
              + "\nSunshine_duration = " + translate_time(b[2])
              + "h", fontsize=10)
     fig.text(0.55, -0.25, "Valid_date: " + dt.strftime(date, "%d-%b-%Y")
-             + "\nLocation:\nLatitude= " + str(round(lat, 4)) + "°\nLongitude = "
-             + str(round(lon, 4)) + "°", fontsize=10)
+             + "\nLocation:\nLatitude= " + str(round(lat, 4))
+             + "°\nLongitude = " + str(round(lon, 4)) + "°", fontsize=10)
     ax1 = fig.add_axes([0, 0, 1, 1], polar=True)
     ax1.set_title("Solar Path", fontsize=22)
 #    ax1.plot.subtitle("Location: Lon = " + str(lon) + "Lat = " +str(lat))
@@ -176,8 +184,8 @@ def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
 #                   + "\nSunrise = " + b[0] + " local time"
 #                   + "\nSunset = " + b[1] + " local time"
 #                   + "\nSunshine_duration = " + b[2], loc = "right", fontsize=10)
-    p1 = ax1.plot(a[0][:-1], a[1][:-1], color='gold')
-    p2 = ax1.plot((a[0][-1]), a[1][-1], color ='gold', marker = "o", markersize=20)
+    ax1.plot(a[0][:-1], a[1][:-1], color='gold')
+    ax1.plot((a[0][-1]), a[1][-1], color='gold', marker="o", markersize=20)
     if get_season(date) == "north winter":
         ax2 = fig.add_axes([.15, .7, .2, .3])
         ax1.set_rgrids([90, 60, 30, 0], angle=45, color='r')
@@ -186,7 +194,7 @@ def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
         ax1.set_xticklabels(["N", "", "E", "SE", "S", "SW", "W", "NW"],
                             fontsize=18)
     else:
-        ax2 = fig.add_axes([.15, 0, .2,.3])
+        ax2 = fig.add_axes([.15, 0, .2, .3])
         ax1.set_rgrids([90, 60, 30, 0], angle=135, color='r')
         ax1.set_yticklabels(["90°", "60°", "30°", "0°\nsolar\nelevation"],
                             fontsize=14, ha="center", va='top')
@@ -195,17 +203,19 @@ def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
     ax2.get_xaxis().set_visible(False)
     ax2.get_yaxis().set_visible(False)
     ax2.set_title("UV-Index", va="top", fontsize=18)
-    ax2.text(.5, .45, str(int(UVI)), ha="center",va="center", fontsize=48)
-    ax2.set_facecolor(clist[int(UVI)])
+    ax2.text(.5, .45, "max: " + str(round(UVI[0])) + "\nnow: "
+             + str(round(UVI[1])), ha="center", va="center", fontsize=20)
+    if night is True:
+        ax2.text(.5, 0.025, "It is night!", va="bottom", ha="center")
+    ax2.set_facecolor(clist[min(round(UVI[0]), 12)])
     if filepath is not None:
         plt.savefig(filepath, dpi=150)
         plt.close()
-        
     return fig
 #date=dt(2021,7,18,8,15)
-plot_solar_elevation(np.deg2rad(30), np.deg2rad(180), 2000)
+#plot_solar_elevation(np.deg2rad(30), np.deg2rad(40), 2000, dt(2021, 8, 15, 13, 22))
 
-print(calculate_UV_Index(30, 180, 2000, dt.now(pytz.timezone('utc'))))
+#print(calculate_UV_Index(50, 180, 2000, dt.now(pytz.timezone('utc'))))
 
 #if get_hemisphere(lat) == "north":
 #        ax1.set_xticklabels(np.arange(0 , 24, 3),fontsize=18)
