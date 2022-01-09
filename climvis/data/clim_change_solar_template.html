@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--HTML styling done by Brynjar-->
+<!--The styling could have been its own file, e.g. "styles.css", but then
+the file would have to be generated every single time the program runs.-->
+<html>
+<head>
+    <style>
+        body {
+            font-family: -webkit-pictograph;
+            background-color: #f6f6f6;
+        }
+        .main {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            min-height: 100%;
+            padding-left: 50px;
+            padding-right: 50px;
+            padding-top: 50px;
+        }
+        .header {
+            margin-bottom: 20px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            position: fixed;
+            background-color: #e8e8e8;
+            box-shadow: 0 4px 2px -2px gray;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            column-gap: 40px;
+            justify-items: center;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            min-height: 100px;
+            background-color: #e8e8e8;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            column-gap: 40px;
+            justify-items: center;
+        }
+    </style>
+</head>
+<body>
+
+
+<!--The header of the page-->
+<div class="header">
+    <p>ClimVis 0.0.1</p>
+    <p>CRU visualization</p>
+    <p>[CITY]</p>
+</div>
+
+
+<!--The main container-->
+<div class="main">
+
+<!--Intro text -->
+    <h1>Climate visualization</h1>
+    <h2 style="font-style: italic">Location: [CITY]</h2>
+
+<!--The map from Google-->
+    <p>Selected point: [LONLAT]</p>
+    <img alt="no img" src="[IMGURL]" style="padding-bottom:30px">
+
+<!--The annual cycle for temperature and precipitation-->
+    <h2>Climate diagram from CRU TS v4.03 at the closest gridpoint of [CITY]</h2>
+    <a href="annual_cycle.png"> <img alt="no img" src="annual_cycle.png"></a>
+    
+<!--Timeseries of the annual temperature-->
+    <h2>Timeseries and temperature averages in certain periods from CRU TS v4.03</h2>
+    <a href="annual_tmp_averages.png"> <img alt="no img" src="annual_tmp_averages.png"></a>
+    
+<!--Visualization of snow depth-->
+    <h2>Visualization of snow depth in certain periods from ERA5</h2>
+    <a href="snow_depth_averages.png"> <img alt="no img" src="snow_depth_averages.png"></a>
+    <a href="snow_depth_averages2.png"> <img alt="no img" src="snow_depth_averages2.png"></a> 
+
+<!--Visualization of UVI and Sunpos-->
+    <h2>Solar position and path for choosen time and day and UV-Index</h2>
+    <a href="solar_path.png"> <img alt="no img" src="solar_path.png"></a>
+    
+</div>
+
+
+<!--The footer-->
+<div class="footer">
+    <div>
+        <p>Made by </p>
+        <ul>
+            <li>Paula Spannring</li>
+            <li>Leopold Schlagbauer</li>
+            <li>Sebastian Gschösser</li>
+            <li>Brynjar Morka Mæhlum</li>
+        </ul>
+    </div>
+    <div style="max-width: 350px">
+        <p>The term project in Scientific Programming at the University of Innsbruck, the winter semester 2021/2022.</p>
+    </div>
+    <div>
+        <p>Code available at <a href="https://github.com/brynjarmorka/climvis">GitHub</a>.</p>
+    </div>
+</div>
+
+</body>
+</html>
