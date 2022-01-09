@@ -5,7 +5,7 @@ import shutil
 import xarray as xr
 import numpy as np
 from motionless import DecoratedMap, LatLonMarker
-from climvis import cfg, graphics, cli, climate_change, snow
+from climvis import cfg, graphics, cli, climate_change, snow, solar
 import csv
 import pandas as pd
 import sys
@@ -67,9 +67,7 @@ def get_cru_timeseries(lon, lat):
     with xr.open_dataset(cfg.cru_pre_file) as ds:
         pre_ts = ds.pre.sel(lon=lon, lat=lat, method="nearest")
         df["pre"] = pre_ts.to_series()
-#    with xr.open_dataset(cfg.cru_frs_file) as ds:
-#        frs_ts = ds.frs.sel(lon=lon, lat=lat, method="nearest")
-#        df["frs"] = frs_ts.to_series()    
+
     with xr.open_dataset(cfg.cru_topo_file) as ds:
         z = float(ds.z.sel(lon=lon, lat=lat, method="nearest"))
     
@@ -114,7 +112,7 @@ def mkdir(path, reset=False):
     return path
 
 
-def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None, zoom=None): 
+def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude, directory=None, zoom=None): 
     """writes the html webpage
     
     changed by Leo and Paula
@@ -148,8 +146,9 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None,
     # Make the plot
     png = os.path.join(directory, "annual_cycle.png")
     png2 = os.path.join(directory, "annual_tmp_averages.png")
+    png3 = os.path.join(directory, "solar_path.png")
     png_snow = os.path.join(directory, "snow_depth_averages.png")
-    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")
+    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")    
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
@@ -161,7 +160,7 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None,
     
     #check if the user wants to have additional temperature timeseries
     #and choose the corresponding html template
-    if add_clim_change == 'yes':
+    if add_clim_change == 'c':
         #if __name__ == "__main__":
         climate_change.plot_timeseries(df, timespan, filepath = png2)
         #choose html template which includes climate change graphics
@@ -170,6 +169,14 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None,
     #choose html template which doesn't include climate change graphics
     elif add_clim_change == 'no':
         html_tpl = cfg.html_tpl
+    
+    elif add_clim_change == 'both':
+        climate_change.plot_timeseries(df, timespan, filepath = png2)
+        solar.plot_solar_elevation(lat, lon, Altitude, date, filepath = png3)
+        html_tpl = cfg.html_tpl_clim_change_solar
+    elif add_clim_change == 's':
+        solar.plot_solar_elevation(lat, lon, Altitude, date, filepath=png3)
+        html_tpl = cfg.html_tpl_solar
     
     #choosing the month for the snow information
     #if __name__ == "__main__":
@@ -196,19 +203,22 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None,
     return outpath
 
 
-def open_cities_file():
+def open_cities_file(elev=None):
     """
     Opens file with cities and corresponding coordinates
     
     author: Paula
-    
+    modified with elevation variation: Sebastian
     Returns
     -------
     panda DataFrame
         country, name, longitude, latitude, elevation of cities.
     """
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
-    world_cities = cfg.world_cities
+    if elev is True:
+        world_cities = cfg.world_cities_elevation
+    elif elev is None:
+        world_cities = cfg.world_cities
     cityfile = open(world_cities,encoding= "windows-1252")
     reader = csv.reader(cityfile)
     # read header (first row)
@@ -227,7 +237,7 @@ def open_cities_file():
     return(cities)
 
 
-def coordinates_city(city):
+def coordinates_city(city, elev=None):
     """
     Extracts coordinates for the asked country
     
@@ -237,8 +247,6 @@ def coordinates_city(city):
     -------
     city : str
         City, which is selected (argument)
-    country : str
-        Country, in which selected city is located (argument)
     
     Returns
     -------
@@ -246,50 +254,6 @@ def coordinates_city(city):
         country, name, longitude, latitude, elevation of selected city.
     
     """
-    cities = open_cities_file()
+    cities = open_cities_file(elev)
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
-
-# =============================================================================
-# def get_month():
-#     """
-#     Get month for which the snow data is viusalized.
-#     
-#     author: Paula
-#     
-#     Returns
-#     -------
-#     int
-#         Month for which data is shown
-#     """
-#     month = int(input('Which month should be shown? Please give the number of the month.'))
-#     valid_month(month)
-#     return month
-# =============================================================================
-
-# =============================================================================
-# def valid_month(month):
-#     """
-#     Test if the input month is valid. In this month the snow data is viusalized.
-#     
-#     author: Paula
-#     
-#     Parameters
-#     -------
-#     month : int
-#         Month for which data is shown
-#         
-#     Raises
-#     -------
-#     TypeError
-#         When the type of ``month`` is not an integer.
-#     ValueError
-#         When the ``month`` is not between 1 and 12.
-#     
-#     """   
-#    
-#     if type(month) != int:
-#         raise TypeError('The month should be an integer')
-#     if month not in np.linspace(1,12,12):
-#         raise ValueError('The number was not valid. The month is between 1 and 12.')
-# =============================================================================
