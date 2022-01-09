@@ -58,6 +58,4 @@ def test_get_sunrise_sunset():
 def test_plot_solar_elevation():
     f = solar.plot_solar_elevation(0, 0, 0,"200001010000")
     assert type(f) == matplotlib.figure.Figure
-
-    
-test_plot_solar_elevation()      
+  

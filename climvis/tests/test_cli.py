@@ -40,12 +40,12 @@ def test_get_month():
     with mock.patch('builtins.input', return_value=10):
         assert get_month()==10
         
-def test_user_input():
+#def test_user_input():
     
-    with mock.patch('builtins.input', return_value="yes"):
-        assert user_input()=='yes'
-    with mock.patch('builtins.input', return_value="no"):
-        assert user_input()=='no'
+#    with mock.patch('builtins.input', return_value="yes"):
+#        assert user_input()=='yes'
+#    with mock.patch('builtins.input', return_value="no"):
+#        assert user_input()=='no'
     
 
 
@@ -53,7 +53,7 @@ def test_print_html(capsys):#, monkeypatch):
         
     timespan = [1901, 1970, 1971, 2018]
     month = 2
-    add_clim_change = "yes"
+    add_clim_change = "c"
     cruvis_io(["-l", "Berlin", "Germany", "--no-browser"], timespan, month, add_clim_change)
     captured = capsys.readouterr()
     assert "File successfully generated at:" in captured.out
@@ -83,6 +83,4 @@ def test_error_not_available_city():
     # The available city in the list is Munich
     with pytest.raises(ValueError, match = 'The city München -and corresponding country- does not exist in the available list of cities. Please try another city nearby!'):
         cruvis_io(["-l", "München"], [], [], [])
-    
-
-    
+        
