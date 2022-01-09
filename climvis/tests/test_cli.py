@@ -51,16 +51,7 @@ def test_get_month():
     with mock.patch('builtins.input', return_value=10):
         assert get_month()==10
         
-<<<<<<< HEAD
-#def test_user_input():
-=======
-def test_user_input():
-    """
-    testing for command line input
-    attempt to test if the user_input function works if 
-    the user input is valid
-    """
->>>>>>> 83579a728fce8f8376552ff965d9c52136d0ac91
+
     
 #    with mock.patch('builtins.input', return_value="yes"):
 #        assert user_input()=='yes'

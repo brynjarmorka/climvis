@@ -92,14 +92,9 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
-
-        Altitude = float(coord["Elevation"].item())
-        #if elev is None:
-
         if elev is True:
             Altitude = float(coord["Elevation"].item())
         elif elev is None:
-
             Altitude = None
         
         
@@ -164,7 +159,7 @@ def cruvis():
 
 def user_input():
 
-#<<<<<<< HEAD
+
     """
     asks the user if additional climate change 
     information is wanted 
@@ -180,19 +175,6 @@ def user_input():
     add_clim_change: string
                      either 'yes' or 'no'
     """
-# =============================================================================
-#      while True:
-#          try:
-#              add_clim_change = str(input('''do you want additional climate change information? 
-#              type either yes or no '''))
-#              if add_clim_change != 'yes' and add_clim_change != 'no':
-#                  raise ValueError('input has to be yes or no')
-#              break
-#          except ValueError:
-#              print('input has to be yes or no!')
-#      return add_clim_change
-# =============================================================================
-#=======
 
     """
     author: Leo
