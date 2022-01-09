@@ -148,7 +148,7 @@ def translate_time(x):
 
 def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
     lat, lon = np.rad2deg(lat), np.rad2deg(lon)
-    if date is None:
+    if date =='no':
         date = dt.now(pytz.timezone('utc'))
     clist =(["lime"] * 3 + ["yellow"] * 3 + ["orangered"] * 3
             + ["magenta"] * 3)

@@ -17,7 +17,7 @@ Usage:
 """
 
 
-def cruvis_io(args, timespan, month, add_clim_change):
+def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
     """The actual command line tool.
 
     changed by Paula and Leo
@@ -26,7 +26,7 @@ def cruvis_io(args, timespan, month, add_clim_change):
     ----------
     args: list
         output of sys.args[1:]
-    timespan, month and add_clim_change are given as userinput
+    timespan, month and add_clim_change_and_solar are given as userinput
     """
 
     if len(args) == 0:
@@ -90,9 +90,11 @@ def cruvis_io(args, timespan, month, add_clim_change):
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
+        #Altitude = float(coord["Elevation"].item())
+        Altitude=None
         
 
-        html_path = climvis.write_html(lon, lat, add_clim_change, timespan, month, city)    
+        html_path = climvis.write_html(lon, lat, add_clim_change_and_solar, timespan, month, city, date, Altitude)    
         if "--no-browser" in args2:                                  
             print("File successfully generated at: " + html_path)
         else:
@@ -117,48 +119,111 @@ def cruvis():
     # (we could, but this is too complicated for now)
 
     if len(sys.argv) >= 3 and "-l" in sys.argv:
-        add_clim_change = user_input()    
+        add_clim_change_and_solar = user_input()    
         
         #if yes the user can give the two timespans as input arguments
-        if add_clim_change == 'yes':
+        if add_clim_change_and_solar == 'c':
             timespan = get_timespan()
             year1, year2, year3, year4 = timespan
             timespan = check_timespan(year1, year2, year3, year4)
-        #if not 4 standard years are given to the rest of the code to make it work,
-        #but aren't displayed in the graphics
-        elif add_clim_change == 'no':
+            date = None
+        elif add_clim_change_and_solar == 'both':
+            timespan = get_timespan()
+            year1, year2, year3, year4 = timespan
+            timespan = check_timespan(year1, year2, year3, year4)
+            datetime = get_datetime()
+            date = valid_datetime(datetime)
+        # if not 4 standard years are given to the rest of the code to make it work,
+        # but aren't displayed in the graphics
+        elif add_clim_change_and_solar == 'no':
             timespan = [1901, 1970, 1971, 2018]
-            
-            
+            date = None
+        elif add_clim_change_and_solar == "s":
+            datetime = get_datetime()
+            date = valid_datetime(datetime)
+            timespan = [1901, 1970, 1971, 2018]
         #ask for the month of which the snowcover is wanted
         month = get_month()
         month = valid_month(month)
-    else: 
-        timespan, month, add_clim_change = None, None, None
     
-    cruvis_io(sys.argv[1:], timespan, month, add_clim_change)
+    else: 
+        timespan, month, add_clim_change_and_solar, date = None, None, None, None
+    
+    cruvis_io(sys.argv[1:], timespan, month, add_clim_change_and_solar, date)
+
 
 def user_input():
-     """
-     author: Leo
-     
-     short function which asks the user if additional climate change 
-     information is wanted
-     returns one variable which equals "yes" or "no" which can be used in 
-     if statements
-     """
-     while True:
-         try:
-             add_clim_change = str(input('''do you want additional climate change information? 
-             type either yes or no '''))
-             if add_clim_change != 'yes' and add_clim_change != 'no':
-                 raise ValueError('input has to be yes or no')
-             break
-         except ValueError:
-             print('input has to be yes or no!')
-     return add_clim_change
+    """
+    author: Leo
+    
+    short function which asks the user if additional climate change
+    information is wanted
+    returns one variable which equals "yes" or "no" which can be used in
+    if statements
+    """
+    while True:
+        try:
+            add_clim_change_and_solar = str(input(
+'''do you want additional climate change or solar information?
+    type either c, s, both or no '''))
+            if (add_clim_change_and_solar != 'c' 
+                and add_clim_change_and_solar != 'no'
+                and add_clim_change_and_solar != 's'
+                and add_clim_change_and_solar != 'both'):
+                raise ValueError('input has to beon of the following: c s both no')
+            break
+        except ValueError:
+            print('Invalid Input')
+    return add_clim_change_and_solar
      
 
+def get_datetime():
+    """
+    author: Sebastian
+    
+    function to ask the user for a date in which he is interrested in the solar 
+    Position and UV-Index
+    -returns datestring
+    """
+    datetime = input("put in your date and time of interrest" +
+                             "in the format: yyyymmddHHMM \nor type no if" +
+                             "you want to use the current time: ")
+    return datetime
+
+
+def valid_datetime(datetime):
+    """
+    author: Sebastian
+    
+    validation if given input datetime is correct
+    -returns datestring
+    """
+    if not ((datetime == 'no') or (datetime.isdigit())):
+        raise TypeError('The datetime should be a 12 digit integer or no')
+    elif datetime =='no':
+        return datetime
+    else:
+        if len(datetime) != 12:
+            raise ValueError(''' the inputted datetime has to be 12 long''')
+        elif ((int(datetime[4]) == 1 and int(datetime[5]) > 2)
+                or int(datetime[4]) > 1):
+            raise ValueError(''' Something wrong in datetime, month: '''
+                             + datetime[4] + datetime[5]
+                             + '''doesn't exist''')
+        elif (int(datetime[8]) == 2 and int(datetime[9]) > 4
+                or int(datetime[9]) > 2):
+            raise ValueError(''' Something wrong in datetime, hour: '''
+                                 + datetime[8] + datetime[9]
+                                 + '''doesn't exist''')
+        elif int(datetime[10]) > 6:
+            raise ValueError(''' Something wrong in datetime, minute: '''
+                             + datetime[10] + datetime[11]
+                             + '''doesn't exist''')
+        else:
+            return datetime
+      
+            
+            
 def get_timespan():
     """
     author: Leo

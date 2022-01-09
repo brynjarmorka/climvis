@@ -5,7 +5,7 @@ import shutil
 import xarray as xr
 import numpy as np
 from motionless import DecoratedMap, LatLonMarker
-from climvis import cfg, graphics, cli, climate_change, snow
+from climvis import cfg, graphics, cli, climate_change, snow, solar
 import csv
 import pandas as pd
 import sys
@@ -114,7 +114,7 @@ def mkdir(path, reset=False):
     return path
 
 
-def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None, zoom=None): 
+def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude, directory=None, zoom=None): 
     """writes the html webpage
     
     changed by Leo and Paula
@@ -161,7 +161,7 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None,
     
     #check if the user wants to have additional temperature timeseries
     #and choose the corresponding html template
-    if add_clim_change == 'yes':
+    if add_clim_change == 'c':
         #if __name__ == "__main__":
         climate_change.plot_timeseries(df, timespan, filepath = png2)
         #choose html template which includes climate change graphics
@@ -170,6 +170,14 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, directory=None,
     #choose html template which doesn't include climate change graphics
     elif add_clim_change == 'no':
         html_tpl = cfg.html_tpl
+    
+    elif add_clim_change == 'both':
+        climate_change.plot_timeseries(df, timespan, filepath = png2)
+        solar.plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None)
+        html_tpl = cfg.html_tpl_clim_change_solar
+    elif add_clim_change == 's':
+        solar.plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None)
+        html_tpl = cfg.html_tpl_solar
     
     #choosing the month for the snow information
     #if __name__ == "__main__":
