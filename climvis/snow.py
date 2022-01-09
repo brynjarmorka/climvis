@@ -16,9 +16,6 @@ import cartopy  # Map projections libary
 import cartopy.crs as ccrs  # Projections list
 
 
-
-
-
 def get_data():
     """Opens the file of monthly snow data (ERA5). The user should have download the data before and saved this
     at the same directory as the CRU files. (link for download: https://fabienmaussion.info/climate_system/download.html)
@@ -39,7 +36,7 @@ def get_data():
     return snow_depth
 
 def extract_map_part(lon,lat,month, years):
-    """Extracts data, which are plotted: 
+    """Extracts data, which should be plotted: 
     around the selected city,
     the average of snow depth over a certain period of time,
     for a selected month.
@@ -71,7 +68,7 @@ def extract_map_part(lon,lat,month, years):
     lat_range = slice(lat + d_lat, lat - d_lat)
     
     # Compute the average over the time period.
-    # Extract the data for computed coordinates (around the slected city) and the selected month.
+    # Extract the data for computed coordinates (around the selected city) and the selected month.
     year_begin = 2018-years
     snow_depth_year = snow_depth.sel(time = slice(str(year_begin), '2019'))
     snow_depth_mon = snow_depth_year.groupby('time.month').mean().sel(month = month)
@@ -82,7 +79,7 @@ def extract_map_part(lon,lat,month, years):
 
 def plot_snowdepth(lon,lat,month,years, filepath = None):
     """Plots the snow depth around the selected city,
-    the data is averaged of over a certain period for a selected month.
+    the data is averaged over a certain period for a selected month.
     
     Parameters
     -------
@@ -94,31 +91,32 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
         Selected month (input)
     years : int
         Number of years over which should be avereged (until 2018)
+    filepath : str
+        optional
     """
 
     snow_depth_map = extract_map_part(lon,lat,month,years)
     year_begin = 2018-years
    
-    
+    #Create figure with adjusted axes
     g, ax = plt.subplots(figsize=(6,4))
-    
     plt.gca().axes.yaxis.set_visible(False)
     plt.gca().axes.xaxis.set_visible(False)
     plt.box(on = False)
-    
     ax = plt.axes(projection=ccrs.PlateCarree())
     
     # Compute the levels and ticks for the colorbar of the plot
-    snowdepth_max = np.round(np.max(snow_depth_map),decimals = 1)
+    snowdepth_max = np.round(np.max(snow_depth_map),decimals = 2)
     levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 1)
     ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 1)
     
     # Visualizing the snow depth
     snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = levels, vmin = 0, alpha = 0.7, cbar_kwargs={'label': 'm', 'ticks' : ticks})
+    
     # Showing the selected city in the map
     plt.plot(lon,lat,'rx', ms = 12, mew = 3) 
     
-    # Add state boarders and coastline to the map
+    # Add state boarders and coastlines to the map
     ax.add_feature(cartopy.feature.BORDERS);
     ax.coastlines();
     
@@ -137,6 +135,3 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
         plt.close()
         
     return g
-
-
-#ax = plot_snowdepth(11,47,2,5, filepath = None)

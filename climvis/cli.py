@@ -42,13 +42,12 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
             print("cruvis --loc needs city parameter!")
             return
            
-        # extract city and country argment if --no-browser is in argument
+        # extract city and country argument if --no-browser is in argument
         args2 = args.copy()
         if "--no-browser" in args:
-            args.remove("--no-browser")   #changes made!!!
-            
+            args.remove("--no-browser")
 
-        # get coordinates of asked city
+        # get coordinates of selected city
         city = args[1]
         elev = None
         if ((add_clim_change_and_solar == 's')
@@ -58,7 +57,7 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         # Check if there are more cities with the same name
         if len(coord) > 1:
-            if len(args) == 3:  #changes made!!!!
+            if len(args) == 3:
                 country = args[2]
                 coord = coord[(coord['Country'] == country)]
             else:
@@ -76,9 +75,6 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
                     else:
                         print(f'Select an integer index in the range [0, {len(coord) - 1}]')
                 coord = coord.iloc[user_select:user_select + 1]
-                # raise ValueError(f'There are more cities with the name {city}.\n'
-                #                  'Please add the country of the city as input!\n'
-                #                  f'This is the possibilities: \n{coord}\n')
 
         # Check if city is available in list
         if coord.empty:
@@ -88,7 +84,7 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
                 f'If you tried to get solar information (s or both) the list of available cities is smaller. '
                 f'try also running the script without solar elevation (c or no)')
 
-        # Check if given city is in given country
+        # Check if selected city is in selected country
         if len(args) == 3:   
             country = args[2]
             if (coord['Country'] != country).item():
@@ -293,9 +289,9 @@ def get_month():
     Returns
     -------
     int
-        Month for which data is shown
+        Month for which data is viuslized
     """
-    month = int(input('Which month should be shown? Please give the number of the month.'))
+    month = int(input('For which month the snow data should be shown? Please give the number of the month.'))
     return month
 
 def valid_month(month):
@@ -307,14 +303,19 @@ def valid_month(month):
     Parameters
     -------
     month : int
-        Month for which data is shown
+        Month for which data is viuslized
+        
+     Returns
+    -------
+    int
+        Month for which data is viuslized    
         
     Raises
     -------
     TypeError
         When the type of ``month`` is not an integer.
     ValueError
-        When the ``month`` is not between 1 and 12.
+        When the value of ``month`` is not between 1 and 12.
     
     """   
    

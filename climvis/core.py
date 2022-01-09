@@ -67,9 +67,7 @@ def get_cru_timeseries(lon, lat):
     with xr.open_dataset(cfg.cru_pre_file) as ds:
         pre_ts = ds.pre.sel(lon=lon, lat=lat, method="nearest")
         df["pre"] = pre_ts.to_series()
-#    with xr.open_dataset(cfg.cru_frs_file) as ds:
-#        frs_ts = ds.frs.sel(lon=lon, lat=lat, method="nearest")
-#        df["frs"] = frs_ts.to_series()    
+
     with xr.open_dataset(cfg.cru_topo_file) as ds:
         z = float(ds.z.sel(lon=lon, lat=lat, method="nearest"))
     
@@ -216,11 +214,15 @@ def open_cities_file(elev=None):
     panda DataFrame
         country, name, longitude, latitude, elevation of cities.
     """
+<<<<<<< HEAD
     #world_cities = 'C:/Users/Paula/Programming/climvis/climvis\data\world_cities.csv'
     if elev is True:
         world_cities = cfg.world_cities_elevation
     elif elev is None:
         world_cities = cfg.world_cities
+=======
+    world_cities = cfg.world_cities
+>>>>>>> 3c75125f6a8e4490d88779d56bccf23a6b6ad3bd
     cityfile = open(world_cities,encoding= "windows-1252")
     reader = csv.reader(cityfile)
     # read header (first row)
@@ -249,8 +251,6 @@ def coordinates_city(city, elev=None):
     -------
     city : str
         City, which is selected (argument)
-    country : str
-        Country, in which selected city is located (argument)
     
     Returns
     -------
@@ -261,47 +261,3 @@ def coordinates_city(city, elev=None):
     cities = open_cities_file(elev)
     coord_city = cities[(cities['Name'] == city)]
     return coord_city
-
-# =============================================================================
-# def get_month():
-#     """
-#     Get month for which the snow data is viusalized.
-#     
-#     author: Paula
-#     
-#     Returns
-#     -------
-#     int
-#         Month for which data is shown
-#     """
-#     month = int(input('Which month should be shown? Please give the number of the month.'))
-#     valid_month(month)
-#     return month
-# =============================================================================
-
-# =============================================================================
-# def valid_month(month):
-#     """
-#     Test if the input month is valid. In this month the snow data is viusalized.
-#     
-#     author: Paula
-#     
-#     Parameters
-#     -------
-#     month : int
-#         Month for which data is shown
-#         
-#     Raises
-#     -------
-#     TypeError
-#         When the type of ``month`` is not an integer.
-#     ValueError
-#         When the ``month`` is not between 1 and 12.
-#     
-#     """   
-#    
-#     if type(month) != int:
-#         raise TypeError('The month should be an integer')
-#     if month not in np.linspace(1,12,12):
-#         raise ValueError('The number was not valid. The month is between 1 and 12.')
-# =============================================================================
