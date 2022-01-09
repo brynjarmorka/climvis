@@ -92,8 +92,14 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
 
         lon = float(coord["Lon"].item())
         lat = float(coord["Lat"].item())
+
         Altitude = float(coord["Elevation"].item())
-        if elev is None:
+        #if elev is None:
+
+        if elev is True:
+            Altitude = float(coord["Elevation"].item())
+        elif elev is None:
+
             Altitude = None
         
         
@@ -157,6 +163,7 @@ def cruvis():
 
 
 def user_input():
+
 #<<<<<<< HEAD
     """
     asks the user if additional climate change 
@@ -186,6 +193,83 @@ def user_input():
 #      return add_clim_change
 # =============================================================================
 #=======
+
+    """
+    author: Leo
+    
+    short function which asks the user if additional climate change
+    information is wanted
+    returns one variable which equals "yes" or "no" which can be used in
+    if statements
+    """
+    while True:
+        try:
+            add_clim_change_and_solar = str(input(
+'''do you want additional climate change or solar information?
+    type either c       for climate info
+                s       for solar info
+                both    or 
+                no      for no additional info '''))
+            if (add_clim_change_and_solar != 'c' 
+                and add_clim_change_and_solar != 'no'
+                and add_clim_change_and_solar != 's'
+                and add_clim_change_and_solar != 'both'):
+                raise ValueError('input has to beon of the following: c s both no')
+            break
+        except ValueError:
+            print('Invalid Input')
+    return add_clim_change_and_solar
+     
+
+def get_datetime():
+    """
+    author: Sebastian
+    
+    function to ask the user for a date in which he is interrested in the solar 
+    Position and UV-Index
+    -returns datestring
+    """
+    datetime = input("put in your date and time of interest in UTC "
+                             f"in the format: yyyymmddHHMM \nor type no if " 
+                             f"you want to use the current time: ")
+    return datetime
+
+
+def valid_datetime(datetime):
+    """
+    author: Sebastian
+    
+    validation if given input datetime is correct
+    -returns datestring
+    """
+    if not ((datetime == 'no') or (datetime.isdigit())):
+        raise TypeError('The datetime should be a 12 digit integer or no')
+    elif datetime =='no':
+        return datetime
+    else:
+        if len(datetime) != 12:
+            raise ValueError(''' the inputted datetime has to be 12 long''')
+        elif ((int(datetime[4]) == 1 and int(datetime[5]) > 2)
+                or int(datetime[4]) > 1):
+            raise ValueError(''' Something wrong in datetime, month: '''
+                             + datetime[4] + datetime[5]
+                             + '''doesn't exist''')
+        elif (int(datetime[8]) == 2 and int(datetime[9]) > 4
+                or int(datetime[8]) > 2):
+            raise ValueError(''' Something wrong in datetime, hour: '''
+                                 + datetime[8] + datetime[9]
+                                 + '''doesn't exist''')
+        elif int(datetime[10]) > 6:
+            raise ValueError(''' Something wrong in datetime, minute: '''
+                             + datetime[10] + datetime[11]
+                             + '''doesn't exist''')
+        else:
+            return datetime
+      
+            
+            
+def get_timespan():
+
     """
     author: Leo
     
