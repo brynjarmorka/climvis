@@ -70,8 +70,12 @@ else:
 # Making some path names
 bdir = os.path.dirname(__file__)
 html_tpl = os.path.join(bdir, "data", "template.html")
+html_tpl_solar = os.path.join(bdir, "data", "solar_template.html")
 html_tpl_clim_change = os.path.join(bdir, "data", "clim_change_template.html")
+html_tpl_clim_change_solar = os.path.join(bdir, "data",
+                                          "clim_change_solar_template.html")
 html_tpl_uibkvis = os.path.join(bdir, "data", "uibkvis_template.html")
 world_cities = os.path.join(bdir, "data", "world_cities_41k.csv")
+world_cities_elevation = os.path.join(bdir, "data", "world_cities.csv")
 
 default_zoom = 8  # Default zoom for the google maps image
