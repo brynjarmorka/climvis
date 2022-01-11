@@ -135,3 +135,86 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
         plt.close()
         
     return g
+
+def extract_snow_dif(lon,lat,month):
+    """Extracts data, which should be plotted: 
+    around the selected city,
+    the average of snow depth over a certain period of time,
+    for a selected month.
+    
+    Parameters
+    -------
+    lon : float
+        Longitude of the selected city
+    lat : float
+        Latitude of the selected city
+    month : int
+        Selected month (input)
+    
+    Returns
+    -------
+    Data Array
+        Difference Snow depth in m between data 1978-2018 and 2013-2018 (dim: longitude, latitude) 
+    """
+    
+    snow_5years = extract_map_part(lon,lat,month, 5)
+    snow_40years = extract_map_part(lon,lat,month, 40)
+    snow_dif = snow_40years - snow_5years
+    
+    return snow_dif
+
+def plot_snow_dif(lon,lat,month, filepath = None):
+    """Plots the snow depth around the selected city,
+    the data is averaged over a certain period for a selected month.
+    
+    Parameters
+    -------
+    lon : float
+        Longitude of the selected city
+    lat : float
+        Latitude of the selected city
+    month : int
+        Selected month (input)
+    filepath : str
+        optional
+    """
+
+    snow_depth_map = extract_snow_dif(lon,lat,month)
+    
+    #Create figure with adjusted axes
+    g, ax = plt.subplots(figsize=(6,4))
+    plt.gca().axes.yaxis.set_visible(False)
+    plt.gca().axes.xaxis.set_visible(False)
+    plt.box(on = False)
+    ax = plt.axes(projection=ccrs.PlateCarree())
+    
+    # Compute the levels and ticks for the colorbar of the plot
+    snowdepth_max = np.round(np.max(snow_depth_map),decimals = 2)
+    levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 1)
+    ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 1)
+    
+    # Visualizing the snow depth
+    snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = levels, vmin = 0, alpha = 0.7, cbar_kwargs={'label': 'm', 'ticks' : ticks})
+    
+    # Showing the selected city in the map
+    plt.plot(lon,lat,'rx', ms = 12, mew = 3) 
+    
+    # Add state boarders and coastlines to the map
+    ax.add_feature(cartopy.feature.BORDERS);
+    ax.coastlines();
+    
+    # Adjust the coordinate lines and labels
+    gl = ax.gridlines(draw_labels=True)
+    gl.top_labels = False
+    gl.right_labels = False
+    
+    # Add title to the figure
+    month_label = ['January','February','March', 'April', 'May', 'June', 'July', 'August', 'September', 'Ocotber', 'November', 'December']
+    plt.title(f'Difference of snow depth (in m) between average of 1979-2018 and 2013-2018 in {month_label[month-1]}');
+    
+
+    if filepath is not None:
+        plt.savefig(filepath, dpi=150)
+        plt.close()
+        
+    return g

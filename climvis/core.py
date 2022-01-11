@@ -148,7 +148,9 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude,
     png2 = os.path.join(directory, "annual_tmp_averages.png")
     png3 = os.path.join(directory, "solar_path.png")
     png_snow = os.path.join(directory, "snow_depth_averages.png")
-    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")    
+    png_snow2 = os.path.join(directory, "snow_depth_averages2.png")  
+    png_snow_diff = os.path.join(directory, "snow_depth_diff.png")
+    png_snow_diff2 = os.path.join(directory, "snow_depth_diff2.png")
     df = get_cru_timeseries(lon, lat)
     
     #checking for NaN's
@@ -178,12 +180,13 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude,
         solar.plot_solar_elevation(lat, lon, Altitude, date, filepath=png3)
         html_tpl = cfg.html_tpl_solar
     
-    #choosing the month for the snow information
+   
     #if __name__ == "__main__":
-    month_snow = month
-    snow.plot_snowdepth(lon,lat,month_snow,5, filepath = png_snow)
-    snow.plot_snowdepth(lon,lat,month_snow,40, filepath = png_snow2)
-    
+    #month_snow = month
+    snow.plot_snowdepth(lon,lat,2,5, filepath = png_snow)
+    snow.plot_snowdepth(lon,lat,8,40, filepath = png_snow2)
+    snow.plot_snow_dif(lon,lat,2, filepath = png_snow_diff)
+    snow.plot_snow_dif(lon,lat,8, filepath = png_snow_diff2)
 
     outpath = os.path.join(directory, "index.html")
     with open(html_tpl, "r") as infile:
