@@ -14,6 +14,26 @@ from climvis.core import mkdir
 
 
 def write_html_uibkvis(station, interval, directory=None):
+    """
+    Function which makes the plots, loads ACINN data and puts it together to a HTML-file.
+
+    Author: Brynjar
+
+
+    Parameters
+    ----------
+    station : str
+            The name of the station
+    interval : str
+            Interval in days
+    directory : str
+            The directory for the html-file. Will be a temp-dir if it is None
+
+    Returns
+    -------
+    str
+        directory of the html-file, ending with "uibk.html"
+    """
     # Set defaults
     if directory is None:
         directory = mkdtemp()
