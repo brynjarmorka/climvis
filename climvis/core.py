@@ -112,7 +112,7 @@ def mkdir(path, reset=False):
     return path
 
 
-def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude, directory=None, zoom=None): 
+def write_html(lon, lat, add_clim_change, timespan, city, date, Altitude, directory=None, zoom=None): 
     """writes the html webpage
     
     changed by Leo and Paula
@@ -184,7 +184,7 @@ def write_html(lon, lat, add_clim_change, timespan, month, city, date, Altitude,
     #if __name__ == "__main__":
     #month_snow = month
     snow.plot_snowdepth(lon,lat,2,5, filepath = png_snow)
-    snow.plot_snowdepth(lon,lat,8,40, filepath = png_snow2)
+    snow.plot_snowdepth(lon,lat,8,5, filepath = png_snow2)
     snow.plot_snow_dif(lon,lat,2, filepath = png_snow_diff)
     snow.plot_snow_dif(lon,lat,8, filepath = png_snow_diff2)
 

@@ -17,7 +17,7 @@ Usage:
 """
 
 
-def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
+def cruvis_io(args, timespan, add_clim_change_and_solar, date=None):
     """The actual command line tool.
 
     changed by Paula and Leo
@@ -99,7 +99,7 @@ def cruvis_io(args, timespan, month, add_clim_change_and_solar, date=None):
         
         
 
-        html_path = climvis.write_html(lon, lat, add_clim_change_and_solar, timespan, month, city, date, Altitude)    
+        html_path = climvis.write_html(lon, lat, add_clim_change_and_solar, timespan, city, date, Altitude)    
         if "--no-browser" in args2:                                  
             print("File successfully generated at: " + html_path)
         else:
@@ -148,13 +148,12 @@ def cruvis():
             date = valid_datetime(datetime)
             timespan = [1901, 1970, 1971, 2018]
         #ask for the month of which the snowcover is wanted
-        month = get_month()
-        month = valid_month(month)
+
     
     else: 
-        timespan, month, add_clim_change_and_solar, date = None, None, None, None
+        timespan, add_clim_change_and_solar, date = None, None, None
     
-    cruvis_io(sys.argv[1:], timespan, month, add_clim_change_and_solar, date)
+    cruvis_io(sys.argv[1:], timespan, add_clim_change_and_solar, date)
 
 
 def user_input():
@@ -401,48 +400,3 @@ def check_timespan(year1, year2, year3, year4):
                          the years have to be given in ascending order!''')
     else: return timespan
     
-def get_month():
-    """
-    Get month for which the snow data is viusalized.
-    
-    author: Paula
-    
-    Returns
-    -------
-    int
-        Month for which data is viuslized
-    """
-    month = int(input('For which month the snow data should be shown? Please give the number of the month.'))
-    return month
-
-def valid_month(month):
-    """
-    Test if the input month is valid. In this month the snow data is viusalized.
-    
-    author: Paula
-    
-    Parameters
-    -------
-    month : int
-        Month for which data is viuslized
-        
-     Returns
-    -------
-    int
-        Month for which data is viuslized    
-        
-    Raises
-    -------
-    TypeError
-        When the type of ``month`` is not an integer.
-    ValueError
-        When the value of ``month`` is not between 1 and 12.
-    
-    """   
-   
-    if type(month) != int:
-        raise TypeError('The month should be an integer')
-    if month not in np.linspace(1,12,12):
-        raise ValueError('The number was not valid. The month is between 1 and 12.')
-        
-    return month

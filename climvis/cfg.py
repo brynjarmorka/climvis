@@ -52,6 +52,12 @@ def check_if_files_are_accessible():
     no return
     """
     # First make the filenames
+    
+    global cru_tmp_file
+    global cru_pre_file
+    global cru_topo_file
+    global era5_snow_file
+    
     try:
         cru_dir = get_cru_dir()
         cru_tmp_file = Path(cru_dir, "cru_ts4.03.1901.2018.tmp.dat.nc")

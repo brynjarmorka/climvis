@@ -107,8 +107,8 @@ def plot_snowdepth(lon,lat,month,years, filepath = None):
     
     # Compute the levels and ticks for the colorbar of the plot
     snowdepth_max = np.round(np.max(snow_depth_map),decimals = 2)
-    levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 1)
-    ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 1)
+    levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 2)
+    ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 2)
     
     # Visualizing the snow depth
     snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = levels, vmin = 0, alpha = 0.7, cbar_kwargs={'label': 'm', 'ticks' : ticks})
@@ -190,8 +190,8 @@ def plot_snow_dif(lon,lat,month, filepath = None):
     
     # Compute the levels and ticks for the colorbar of the plot
     snowdepth_max = np.round(np.max(snow_depth_map),decimals = 2)
-    levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 1)
-    ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 1)
+    levels = np.round(np.linspace(0, snowdepth_max, 11),decimals = 2)
+    ticks = np.round(np.linspace(0, snowdepth_max, 6),decimals = 2)
     
     # Visualizing the snow depth
     snow_depth_map.plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'Blues', levels = levels, vmin = 0, alpha = 0.7, cbar_kwargs={'label': 'm', 'ticks' : ticks})
@@ -210,7 +210,7 @@ def plot_snow_dif(lon,lat,month, filepath = None):
     
     # Add title to the figure
     month_label = ['January','February','March', 'April', 'May', 'June', 'July', 'August', 'September', 'Ocotber', 'November', 'December']
-    plt.title(f'Difference of snow depth (in m) between average of 1979-2018 and 2013-2018 in {month_label[month-1]}');
+    plt.title(f'Difference of snow depth (in m) between average of 1979-2018 and 2013-2018 in {month_label[month-1]}', fontdict = {'fontsize': 8});
     
 
     if filepath is not None:
