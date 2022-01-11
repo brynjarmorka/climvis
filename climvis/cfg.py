@@ -43,29 +43,41 @@ def get_cru_dir():
     return local_path
 
 
-# First make the filenames
-# Remember to update the list required_data_files when more data files are added here
-try:
-    cru_dir = get_cru_dir()
-    cru_tmp_file = Path(cru_dir,"cru_ts4.03.1901.2018.tmp.dat.nc")
-    cru_pre_file = Path(cru_dir,"cru_ts4.03.1901.2018.pre.dat.nc")
-    cru_topo_file = Path(cru_dir,"cru_cl1_topography.nc")
-    era5_snow_file = Path(cru_dir,"ERA5_LowRes_Monthly_snow.nc")
-except Exception as exc:
-    print(f'Could not find the file at "{os.path.expanduser("~")}/.climvis.txt"')
-    raise FileNotFoundError(no_cru)
+def check_if_files_are_accessible():
+    """
+    Function which checks if the required files are accessible to Climvis.
 
-# Then check if the files actually exists
-if (
-    cru_topo_file.exists()
-    and cru_pre_file.exists()
-    and cru_topo_file.exists()
-    and era5_snow_file.exists()
-):
-    print("Data files successfully found.")
-else:
-    print('Unable to find the datafiles. Make sure that the ".climvis.txt" file only contains the data folder path.')
-    raise FileNotFoundError(no_cru)
+    Author: Brynjar (I think, and some Paula)
+
+    no return
+    """
+    # First make the filenames
+    try:
+        cru_dir = get_cru_dir()
+        cru_tmp_file = Path(cru_dir, "cru_ts4.03.1901.2018.tmp.dat.nc")
+        cru_pre_file = Path(cru_dir, "cru_ts4.03.1901.2018.pre.dat.nc")
+        cru_topo_file = Path(cru_dir, "cru_cl1_topography.nc")
+        era5_snow_file = Path(cru_dir, "ERA5_LowRes_Monthly_snow.nc")
+    except Exception as exc:
+        print(f'Could not find the file at "{os.path.expanduser("~")}/.climvis.txt"')
+        raise FileNotFoundError(no_cru)
+
+    # Then check if the files actually exists
+    if (
+        cru_topo_file.exists()
+        and cru_pre_file.exists()
+        and cru_topo_file.exists()
+        and era5_snow_file.exists()
+        and cru_tmp_file.exists()
+    ):
+        print("Data files successfully found.")
+    else:
+        print('Unable to find the datafiles. Make sure that ".climvis.txt" file only contains the data folder path.')
+        raise FileNotFoundError(no_cru)
+
+
+# running the file checker function
+check_if_files_are_accessible()
 
 # Making some path names
 bdir = os.path.dirname(__file__)
