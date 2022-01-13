@@ -138,15 +138,14 @@ def cruvis():
             timespan = check_timespan(year1, year2, year3, year4)
             datetime = get_datetime()
             date = valid_datetime(datetime)
-        # if not 4 standard years are given to the rest of the code to make it work,
-        # but aren't displayed in the graphics
+        # if not 4 standard years are given to the rest of the code
         elif add_clim_change_and_solar == 'no':
-            timespan = [1901, 1970, 1971, 2018]
+            timespan = [1901, 1980, 1981, 2018]
             date = None
         elif add_clim_change_and_solar == "s":
             datetime = get_datetime()
             date = valid_datetime(datetime)
-            timespan = [1901, 1970, 1971, 2018]
+            timespan = [1901, 1980, 1981, 2018]
         #ask for the month of which the snowcover is wanted
 
     
@@ -154,6 +153,7 @@ def cruvis():
         timespan, add_clim_change_and_solar, date = None, None, None
     
     cruvis_io(sys.argv[1:], timespan, add_clim_change_and_solar, date)
+    return timespan
 
 
 def user_input():
@@ -175,22 +175,15 @@ def user_input():
                      either 'yes' or 'no'
     """
 
-    """
-    author: Leo
-    
-    short function which asks the user if additional climate change
-    information is wanted
-    returns one variable which equals "yes" or "no" which can be used in
-    if statements
-    """
     while True:
         try:
             add_clim_change_and_solar = str(input(
-'''do you want additional climate change or solar information?
-    type either c       for climate info
+'''do you want additional solar information and choose temperature timeseries as climate change information?
+if you don't choose them, the timeseries between 1901-1980 and 1981-2018 are displayed per default. 
+    type either c       for choosing the temperature timeseries periods
                 s       for solar info
                 both    or 
-                no      for no additional info '''))
+                no      for no solar info and default timeseries '''))
             if (add_clim_change_and_solar != 'c' 
                 and add_clim_change_and_solar != 'no'
                 and add_clim_change_and_solar != 's'
@@ -249,112 +242,44 @@ def valid_datetime(datetime):
       
             
             
-def get_timespan():
-
-    """
-    author: Leo
-    
-    short function which asks the user if additional climate change
-    information is wanted
-    returns one variable which equals "yes" or "no" which can be used in
-    if statements
-    """
-    while True:
-        try:
-            add_clim_change_and_solar = str(input(
-'''do you want additional climate change or solar information?
-    type either c, s, both or no '''))
-            if (add_clim_change_and_solar != 'c' 
-                and add_clim_change_and_solar != 'no'
-                and add_clim_change_and_solar != 's'
-                and add_clim_change_and_solar != 'both'):
-                raise ValueError('input has to beon of the following: c s both no')
-            break
-        except ValueError:
-            print('Invalid Input')
-    return add_clim_change_and_solar
-#>>>>>>> b432fef60468c60deb331768abbf6efc52c9ef75
-     
-
-def get_datetime():
-    """
-    author: Sebastian
-    
-    function to ask the user for a date in which he is interrested in the solar 
-    Position and UV-Index
-    -returns datestring
-    """
-    datetime = input("put in your date and time of interrest" +
-                             "in the format: yyyymmddHHMM \nor type no if" +
-                             "you want to use the current time: ")
-    return datetime
 
 
-def valid_datetime(datetime):
-    """
-    author: Sebastian
-    
-    validation if given input datetime is correct
-    -returns datestring
-    """
-    if not ((datetime == 'no') or (datetime.isdigit())):
-        raise TypeError('The datetime should be a 12 digit integer or no')
-    elif datetime =='no':
-        return datetime
-    else:
-        if len(datetime) != 12:
-            raise ValueError(''' the inputted datetime has to be 12 long''')
-        elif ((int(datetime[4]) == 1 and int(datetime[5]) > 2)
-                or int(datetime[4]) > 1):
-            raise ValueError(''' Something wrong in datetime, month: '''
-                             + datetime[4] + datetime[5]
-                             + '''doesn't exist''')
-        elif (int(datetime[8]) == 2 and int(datetime[9]) > 4
-                or int(datetime[8]) > 2):
-            raise ValueError(''' Something wrong in datetime, hour: '''
-                                 + datetime[8] + datetime[9]
-                                 + '''doesn't exist''')
-        elif int(datetime[10]) > 6:
-            raise ValueError(''' Something wrong in datetime, minute: '''
-                             + datetime[10] + datetime[11]
-                             + '''doesn't exist''')
-        else:
-            return datetime
-      
-            
-            
 def get_timespan():
     """
     function to ask the user for the two timespans which he wants to compare
     returns a list of the 4 border years
     author: Leo
-    
+     
     Raises
     ------
     ValueError if they aren't in ascending order or outside the datarange 
-    
+     
     Returns
     -------
     timespan: list of the 4 years 
-    
+     
     """
-    
+     
     while True:
         try:
             year1 = int(input('start year of first timespan: '))
             year2 = int(input('end year of first timespan: '))
             year3 = int(input('start year of second timespan: '))
             year4 = int(input('end year of second timespan: '))
-             
-            if 1901>year1 or year1>=year2 or year2>=year3 or year3>=year4 or year4>2018:
+              
+            if (1901>year1 or year1>=year2 or year1>=year3 or year1>=year4
+                or year2>=year4 or year3>=year4 or year4>2018):
+            #if 1901>year1 or year1>=year2 or year2>=year3 or year3>=year4 or year4>2018:
                 raise ValueError('''The data includes the timespan from 1901 - 2018,
-                                  the years have to be given in ascending order!''')
+                                 the years have to be given in ascending order!''')
             break
         except ValueError:
             print('''the years has to be given as an integer and in ascending order 
-                   in the range of 1901-2018''')
+                  in the range of 1901-2018''')
     timespan = [year1, year2, year3, year4]
     return timespan
+
+
     
 
 def check_timespan(year1, year2, year3, year4):
@@ -380,9 +305,6 @@ def check_timespan(year1, year2, year3, year4):
     ------
     timespan: list of the 4 years 
     
-    
-    
-    
     """
     
     timespan = [year1, year2, year3, year4]
@@ -395,7 +317,8 @@ def check_timespan(year1, year2, year3, year4):
     elif any(type(n) is not int for n in timespan):  
         raise TypeError('expected input type is an integer')
     #check if the years are in the data range and in the right order
-    elif 1901>year1 or year1>=year2 or year2>=year3 or year3>=year4 or year4>2018:
+    elif (1901>year1 or year1>=year2 or year1>=year3 or year1>=year4
+        or year2>=year4 or year3>=year4 or year4>2018):
         raise ValueError('''The data includes the timespan from 1901 - 2018,
                          the years have to be given in ascending order!''')
     else: return timespan

@@ -170,7 +170,7 @@ def write_html(lon, lat, add_clim_change, timespan, city, date, Altitude, direct
     
     #choose html template which doesn't include climate change graphics
     elif add_clim_change == 'no':
-        html_tpl = cfg.html_tpl
+        html_tpl = cfg.html_tpl_clim_change
     
     elif add_clim_change == 'both':
         climate_change.plot_timeseries(df, timespan, filepath = png2)
@@ -178,7 +178,7 @@ def write_html(lon, lat, add_clim_change, timespan, city, date, Altitude, direct
         html_tpl = cfg.html_tpl_clim_change_solar
     elif add_clim_change == 's':
         solar.plot_solar_elevation(lat, lon, Altitude, date, filepath=png3)
-        html_tpl = cfg.html_tpl_solar
+        html_tpl = cfg.html_tpl_clim_change_solar
     
    
     #if __name__ == "__main__":

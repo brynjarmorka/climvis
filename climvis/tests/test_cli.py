@@ -9,7 +9,7 @@ tried to test for user input with unittest.mock
 
 import climvis
 import pytest
-from climvis.cli import cruvis_io, get_month, user_input
+from climvis.cli import cruvis_io
 from unittest import mock
 
 
@@ -37,38 +37,15 @@ def test_version(capsys):
     captured = capsys.readouterr()
     assert climvis.__version__ in captured.out
     
-def test_get_month():
-    """
-    testing for command line input
-    attempt to test if the get_month function works if 
-    the user input is valid
-    """
-    
-    with mock.patch('builtins.input', return_value=1):
-        assert get_month()==1
-    with mock.patch('builtins.input', return_value=5):
-        assert get_month()==5
-    with mock.patch('builtins.input', return_value=10):
-        assert get_month()==10
-        
-
-    
-#    with mock.patch('builtins.input', return_value="yes"):
-#        assert user_input()=='yes'
-#    with mock.patch('builtins.input', return_value="no"):
-#        assert user_input()=='no'
-    
 
 
-def test_print_html(capsys):#, monkeypatch):
+def test_print_html(capsys):
         
     timespan = [1901, 1970, 1971, 2018]
-    month = 2
     add_clim_change = "c"
-    cruvis_io(["-l", "Berlin", "Germany", "--no-browser"], timespan, month, add_clim_change)
+    cruvis_io(["-l", "Berlin", "Germany", "--no-browser"], timespan, add_clim_change)
     captured = capsys.readouterr()
     assert "File successfully generated at:" in captured.out
-    
 
 
 def test_error_1argument(capsys):

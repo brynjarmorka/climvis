@@ -77,12 +77,13 @@ def test_write_html(tmpdir):
     
     add_clim_change_and_solar = 'c'   #changes made!!!!!
     timespan = [1901, 1970, 1971, 2018]
-    month = 2
+    #month = 2
     city = "Innsbruck"
     
     date, Altitude = None, None
     dir = str(tmpdir.join("html_dir"))
-    core.write_html(dfi.Lon, dfi.Lat, add_clim_change_and_solar, timespan, month, city, date, Altitude, directory=dir)
+    #core.write_html(dfi.Lon, dfi.Lat, add_clim_change_and_solar, timespan, month, city, date, Altitude, directory=dir)
+    core.write_html(dfi.Lon, dfi.Lat, add_clim_change_and_solar, timespan, city, date, Altitude, directory=dir)
     assert os.path.isdir(dir)
     
 def test_open_cities_file():
@@ -90,11 +91,13 @@ def test_open_cities_file():
     assert type(cities) == pd.core.frame.DataFrame
     assert cities.columns[1] == 'Name'
     
-def test_valid_month():
-    
-    with pytest.raises(ValueError, match = 'The number was not valid. The month is between 1 and 12.'):
-        cli.valid_month(int(13))
-        
-    with pytest.raises(TypeError, match = 'The month should be an integer'):
-        cli.valid_month('month')
+# =============================================================================
+# def test_valid_month():
+#     
+#     with pytest.raises(ValueError, match = 'The number was not valid. The month is between 1 and 12.'):
+#         cli.valid_month(int(13))
+#         
+#     with pytest.raises(TypeError, match = 'The month should be an integer'):
+#         cli.valid_month('month')
+# =============================================================================
         
