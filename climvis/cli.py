@@ -17,7 +17,7 @@ Usage:
 """
 
 
-def cruvis_io(args, timespan, add_clim_change_and_solar, date=None):
+def cruvis_io(args, timespan, add_clim_change_and_solar, date=None, elev=True):
     """The actual command line tool.
 
     changed by Paula and Leo
@@ -49,10 +49,9 @@ def cruvis_io(args, timespan, add_clim_change_and_solar, date=None):
 
         # get coordinates of selected city
         city = args[1]
-        elev = None
-        if ((add_clim_change_and_solar == 's')
-            or (add_clim_change_and_solar =='both')):
-            elev=True
+#        if ((add_clim_change_and_solar == 's')
+#            or (add_clim_change_and_solar =='both')):
+#            elev=True
         coord = climvis.core.coordinates_city(city,elev)
 
         # Check if there are more cities with the same name
@@ -77,12 +76,15 @@ def cruvis_io(args, timespan, add_clim_change_and_solar, date=None):
                 coord = coord.iloc[user_select:user_select + 1]
 
         # Check if city is available in list
+        if coord.empty and (elev == True):
+            cruvis_io(sys.argv[1:], timespan, add_clim_change_and_solar, date, None)
+            raise Warning(
+                f'Trying to find city in an larger list of cities, but without elevation data '
+                f' Attention: UV-Index is calculated as if the city is at sea level')
         if coord.empty:
             raise ValueError(
                 f'The city {city} -and corresponding country- does not exist in the available list of cities. Please '
-                f'try another city nearby! Also, cities with whitespace must be written with quotation marks. '
-                f'If you tried to get solar information (s or both) the list of available cities is smaller. '
-                f'try also running the script without solar elevation (c or no)')
+                f'try another city nearby! Also, cities with whitespace must be written with quotation marks. ')
 
         # Check if selected city is in selected country
         if len(args) == 3:   
@@ -99,7 +101,7 @@ def cruvis_io(args, timespan, add_clim_change_and_solar, date=None):
         
         
 
-        html_path = climvis.write_html(lon, lat, add_clim_change_and_solar, timespan, city, date, Altitude)    
+        html_path = climvis.write_html(lon, lat, timespan, city, date, Altitude)    
         if "--no-browser" in args2:                                  
             print("File successfully generated at: " + html_path)
         else:
@@ -160,35 +162,40 @@ def user_input():
 
 
     """
-    asks the user if additional climate change 
-    information is wanted 
+    asks the user if climate change and sun position info  
+    information is wanted for custom times
    
     author: Leo
+    changed: Sebastian
      
     Raises
     ------ 
-    ValueError if input isn't yes or no
+    ValueError if input is different from options
      
     Returns
     -------
     add_clim_change: string
-                     either 'yes' or 'no'
+                     either c, s, both or no
     """
 
     while True:
         try:
             add_clim_change_and_solar = str(input(
-'''do you want additional solar information and choose temperature timeseries as climate change information?
-if you don't choose them, the timeseries between 1901-1980 and 1981-2018 are displayed per default. 
-    type either c       for choosing the temperature timeseries periods
-                s       for solar info
-                both    or 
-                no      for no solar info and default timeseries '''))
+''' Choosing custom times: 
+type either  c       for customizing the temperature timeseries periods
+             s       to customize your time of interest for sun position
+             both    to specify both of the above 
+             no      for default values:
+                     Temperature timeseries:
+                         1901-1980 and 1981-2018 
+                     Sun position info:
+                         current time and date
+->'''))
             if (add_clim_change_and_solar != 'c' 
                 and add_clim_change_and_solar != 'no'
                 and add_clim_change_and_solar != 's'
                 and add_clim_change_and_solar != 'both'):
-                raise ValueError('input has to beon of the following: c s both no')
+                raise ValueError('input has to be one of the following: c s both no')
             break
         except ValueError:
             print('Invalid Input')
@@ -201,7 +208,12 @@ def get_datetime():
     
     function to ask the user for a date in which he is interrested in the solar 
     Position and UV-Index
-    -returns datestring
+    
+    Returns 
+    -------
+    datetime : str
+        a string with year month day hour and minute 
+        e.g. 200001010000 for January 1st 2000  00:00UTC
     """
     datetime = input("put in your date and time of interest in UTC "
                              f"in the format: yyyymmddHHMM \nor type no if " 
@@ -211,11 +223,28 @@ def get_datetime():
 
 def valid_datetime(datetime):
     """
-    author: Sebastian
+    autor Sebastian
+
+    Control of validity of the given string
     
-    validation if given input datetime is correct
-    -returns datestring
+    Parameters
+    ----------
+    datetime : str
+        Value from Userinput    
+
+    Raises
+    ------
+    TypeError
+        Not just digits in input.
+    ValueError
+        Out of bounds for month hour day or minute.
+
+    Returns
+    -------
+    datetime : str
+        Parameter datetime
     """
+
     if not ((datetime == 'no') or (datetime.isdigit())):
         raise TypeError('The datetime should be a 12 digit integer or no')
     elif datetime =='no':

@@ -69,6 +69,10 @@ def test_error_wrongcountry(capsys):
         
 def test_error_not_available_city():
     # The available city in the list is Munich
+    with pytest.raises(Warning, match = 'Trying to find city in an larger list of cities, but without elevation data Attention: UV-Index is calculated as if the city is at sea level'):
+        cruvis_io(["-l", "Numto"], [], [], [], None)
+def test_error_not_available_city():
+    # The available city in the list is Munich
     with pytest.raises(ValueError, match = 'The city München -and corresponding country- does not exist in the available list of cities. Please try another city nearby!'):
-        cruvis_io(["-l", "München"], [], [], [])
+        cruvis_io(["-l", "München"], [], [], [], None)
         

@@ -83,7 +83,7 @@ def test_write_html(tmpdir):
     date, Altitude = None, None
     dir = str(tmpdir.join("html_dir"))
     #core.write_html(dfi.Lon, dfi.Lat, add_clim_change_and_solar, timespan, month, city, date, Altitude, directory=dir)
-    core.write_html(dfi.Lon, dfi.Lat, add_clim_change_and_solar, timespan, city, date, Altitude, directory=dir)
+    core.write_html(dfi.Lon, dfi.Lat, timespan, city, date, Altitude, directory=dir)
     assert os.path.isdir(dir)
     
 def test_open_cities_file():

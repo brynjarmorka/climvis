@@ -112,7 +112,7 @@ def mkdir(path, reset=False):
     return path
 
 
-def write_html(lon, lat, add_clim_change, timespan, city, date, Altitude, directory=None, zoom=None): 
+def write_html(lon, lat, timespan, city, date, Altitude, directory=None, zoom=None):
     """writes the html webpage
     
     changed by Leo and Paula
@@ -123,6 +123,10 @@ def write_html(lon, lat, add_clim_change, timespan, city, date, Altitude, direct
     if the user wants to have it and choose the corresponding html template
     
     Change 3 is in order to display the snow cover during the chosen month
+    
+    changed by Sebastian
+    Change 2 was undone, the html template is now always the same, user gets the 
+    informaion, but can change the time of interest
     
     returns the html path, which is either printed or used to open a html webpage
     later on"""
@@ -160,25 +164,11 @@ def write_html(lon, lat, add_clim_change, timespan, city, date, Altitude, direct
     
     graphics.plot_annual_cycle(df, filepath=png)
     
-    #check if the user wants to have additional temperature timeseries
-    #and choose the corresponding html template
-    if add_clim_change == 'c':
-        #if __name__ == "__main__":
-        climate_change.plot_timeseries(df, timespan, filepath = png2)
-        #choose html template which includes climate change graphics
-        html_tpl = cfg.html_tpl_clim_change
-    
-    #choose html template which doesn't include climate change graphics
-    elif add_clim_change == 'no':
-        html_tpl = cfg.html_tpl_clim_change
-    
-    elif add_clim_change == 'both':
-        climate_change.plot_timeseries(df, timespan, filepath = png2)
-        solar.plot_solar_elevation(lat, lon, Altitude, date, filepath = png3)
-        html_tpl = cfg.html_tpl_clim_change_solar
-    elif add_clim_change == 's':
-        solar.plot_solar_elevation(lat, lon, Altitude, date, filepath=png3)
-        html_tpl = cfg.html_tpl_clim_change_solar
+
+    climate_change.plot_timeseries(df, timespan, filepath = png2)
+    solar.plot_solar_elevation(lat, lon, Altitude, date, filepath = png3)
+    html_tpl = cfg.html_tpl_clim_change_solar
+
     
    
     #if __name__ == "__main__":

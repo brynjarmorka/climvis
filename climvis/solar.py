@@ -27,7 +27,18 @@ import pytz
 
     # getting current datetime
 def calculate_declination(date):
-    """This Function  calculates solar declination angle for a given day"""
+    """Calculates solar declination angle for a given day
+    
+    Parameters
+    -------
+    date : datetime
+        Any wanted datetime for calculation of earth declination
+
+    Returns
+    -------
+    decl : float
+        Declination of earth axis in rad
+    """
     dayofyear = float(dt.strftime(date, "%j"))  # optaining day of the year
     # calculating earth declination for given day of the year (simple formula)
     decl = np.deg2rad(-23.44) * np.cos(np.deg2rad(360 / 365 * (dayofyear + 10)))
@@ -35,8 +46,23 @@ def calculate_declination(date):
 
 
 def calculate_hr_angle(lon, date):
-    """This function calculates solar hour- angle for a given
-    datetime and position, input of time in UTC."""
+    """Calculates solar hour- angle for a given
+    datetime and position, input of time in UTC.
+    
+    Parameters
+    -------
+    lon : float
+        Longitude of the selected city
+    date : datetime
+        Any wanted datetime for calculation of hour angle
+
+    Returns
+    -------
+    hr_angle : Numpy array
+        Array of hour angles in deg for a day
+    day : Numpy array
+        Array of 5 min equal spaced times in hours
+    """
     # optaining hour + minute
     dectime = (float(dt.strftime(date, "%H"))
                + 1 / 60 * float(dt.strftime(date, "%M")))
@@ -55,9 +81,25 @@ def calculate_hr_angle(lon, date):
 
 def calculate_azimuth_and_elevation(lat, lon, date=None):
     """Calculating azimuth and elevation of the sun for given position and time
-    at a fixed location, 
+    at a fixed location
     
-    returns azimuth and elevation in deg"""
+    Parameters
+    -------
+    lat : float
+        Latitude of the selected city
+    lon : float
+        Longitude of the selected city
+    date : datetime
+        Any wanted datetime
+
+    Returns
+    -------
+    azimuth : Numpy array
+        Array of float64 azimuth angles in deg for a day
+    elevation : Numpy array
+        Array of float64 elevation angles in deg for a day
+    """
+
     hr_angle = calculate_hr_angle(lon, date)[0]
     decl = calculate_declination(date)
     a = np.sin(np.deg2rad(lat)) * np.sin(decl)
@@ -75,7 +117,18 @@ def calculate_azimuth_and_elevation(lat, lon, date=None):
 
 
 def get_season(date=None):
-    '''Checking the season'''
+    """Checking the season
+
+    Parameters
+    -------
+    date : datetime
+        Any wanted datetime
+
+    Returns
+    -------
+    season : str
+        north winter or south winter
+    """
     decl = calculate_declination(date)
     if decl < 0:
         season = "north winter"
@@ -87,10 +140,33 @@ def get_season(date=None):
 
 
 def calculate_UV_Index(lat, lon, Altitude, date=None):
-    """  This function generates an UV-Index estimate by Reengeneering
-    the table from Wikipedia. 1367 W m-2 lead to UV Index of 12-13 in Singapur,
-    at Sea level, when the atmospheare is penetrated in the shortest possible
-    way (sunelevation is ~90°). """
+    """Calculates UV-Index
+    
+    
+    
+    Parameters
+    -------
+    lat : float
+        Latitude of the selected city
+    lon : float
+        Longitude of the selected city
+    date : datetime
+        Any wanted datetime
+    Altitude : float
+        Altitude of the selected city in m 
+        optional if None  calculations are done with 0
+
+
+    Returns
+    -------
+    UVI : Numpy array
+        Array of float64 with UVI from 12 local time and current time
+    night : bool
+        Boolean if sun is below horizon
+    warning : str
+        Warning that no altitude was given 
+        
+    """
     # UVI = TOA incomingn radiation pr m2 / (lenght through atmos * atm ext)
     # lenght = 1 /sin(elev)
     # UVI = sin(elev) * TOA /(1/sin(elev)* atm ext)
@@ -116,16 +192,41 @@ def calculate_UV_Index(lat, lon, Altitude, date=None):
         night = False
     elevation = [elevation_noon, elevation_now]
     # Pressure height Standartatmosphere for elevation correction
+    if Altitude is None:
+        Altitude = 0
+        warning = 'No elevation data \nvalues at sea level'
+    else:
+        warning = ''
     local_pressure = 1013.25 * (1 - 6.5 * Altitude / 288150) ** 5.255
     pressure_height = local_pressure / 1013.25
     # Calculating UV-Index
     UVI = 1367 * np.sin(np.deg2rad(elevation)) ** 2 / (mean_Atm_extinct
                                                        * pressure_height)
-    return UVI, night
+    return UVI, night, warning
 
 
 def get_sunrise_sunset(lat, lon, date=None):
-    ''' This function optains sunrise and sunset time and sunshine duration'''
+    """Calculates sunrise and sunset times
+
+    Parameters
+    ----------
+    lat : float
+        Latitude of selected city
+    lon : float
+        Longitude of selected city
+    date : datetime, optional
+        Datetime of interrest. The default is None.
+
+    Returns
+    -------
+    sunrise : float
+        time as hour of calculated sunrise
+    sunset : float
+        time as hour of calculated sunset
+    sunshine_dur : float
+        sinshine duration in hours
+
+    """
     elev = calculate_azimuth_and_elevation(lat, lon, date)[1][:-1]
     # find datapoints where sun is above horizon
     mask = np.where(elev > 0)
@@ -140,17 +241,49 @@ def get_sunrise_sunset(lat, lon, date=None):
 
 
 def translate_time(x):
-    '''translation from hours with decimal minutes to readable times'''
+    """
+    translate time from hours to hours and minutes
+
+    Parameters
+    ----------
+    x : float
+        Something like 6.75 
+
+    Returns
+    -------
+    y : str
+        Something like '6:45'
+
+    """
     y = str(int(x)).zfill(2) + ":" + str(int((x*60) % 60)).zfill(2)
     return y
 
 
-def plot_solar_elevation(lat, lon, Altitude, date, filepath=None):
-    ''' The plotting routine of solar_path and UV-Index
+def plot_solar_elevation(lat, lon, Altitude, date=None, filepath=None):
+    """
     
-    returns a plot'''
+
+    Parameters
+    ----------
+    lat : float
+        Latitude of the selected city
+    lon : float
+        Longitude of the selected city
+    Altitude : float
+        Altitude of the selected city in m
+    date : str, optional
+        string in the form of yyyymmddHHMM
+    filepath : str, optional
+        optional
+
+    Returns
+    -------
+    fig : figure
+        figure with solar path and UV-Index
+
+    """
     # time is essential so eithr use input or get the current utc
-    if date =='no':
+    if (date == None) or date == 'no':
         date = dt.now(pytz.timezone('utc'))
     else:
         date = dt.strptime(date, "%Y%m%d%H%M")
@@ -160,7 +293,7 @@ def plot_solar_elevation(lat, lon, Altitude, date, filepath=None):
     # calling the functions to get azimuth, elevation, sun-times UV-Index
     a = calculate_azimuth_and_elevation(lat, lon, date)
     b = get_sunrise_sunset(lat, lon, date)
-    UVI, night = calculate_UV_Index(lat, lon, Altitude, date)
+    UVI, night, warning = calculate_UV_Index(lat, lon, Altitude, date)
     # designing the figure
     fig = plt.figure()
     # position, time and sun related times are given as text in the figure
@@ -208,6 +341,7 @@ def plot_solar_elevation(lat, lon, Altitude, date, filepath=None):
     # display UV-Index
     ax2.text(.5, .45, "max: " + str(round(UVI[0])) + "\nnow: "
              + str(round(UVI[1])), ha="center", va="center", fontsize=20)
+    ax2.text(.5, .8, warning, ha='center', fontsize=8)
     # check for night
     if night is True:
         ax2.text(.5, 0.025, "It is night!", va="bottom", ha="center")
